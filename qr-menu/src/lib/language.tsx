@@ -13,8 +13,9 @@ type LanguageContextValue = {
 
 const STORAGE_KEY = 'qr-menu-language';
 
-const FONT_AR = '"Tajawal", "Noto Sans Arabic", "Geeza Pro", "Tahoma", system-ui, sans-serif';
+const FONT_AR = 'Inter, "Noto Sans Arabic", "Tajawal", "Geeza Pro", "Tahoma", system-ui, sans-serif';
 const FONT_EN = 'Inter, "SF Pro Text", "Segoe UI", system-ui, sans-serif';
+const HEADING_FONT = '"Playfair Display", "Noto Naskh Arabic", serif';
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
@@ -30,6 +31,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.lang = language;
     document.documentElement.dir = direction;
     document.documentElement.style.setProperty('--font-family', language === 'ar' ? FONT_AR : FONT_EN);
+    document.documentElement.style.setProperty('--font-heading', HEADING_FONT);
     window.localStorage.setItem(STORAGE_KEY, language);
   }, [direction, language]);
 

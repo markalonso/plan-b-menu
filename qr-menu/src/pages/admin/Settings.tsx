@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Input from '../../components/Input';
@@ -12,6 +12,15 @@ const fallbackSettings: Settings = {
   restaurant_name_en: 'Plan B',
   currency: 'EGP'
 };
+
+function FloatingField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="relative block">
+      {children}
+      <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{label}</span>
+    </label>
+  );
+}
 
 export default function SettingsSection({ notify }: { notify: (msg: string) => void }) {
   const { t } = useLanguage();
@@ -55,28 +64,38 @@ export default function SettingsSection({ notify }: { notify: (msg: string) => v
   }
 
   return (
-    <Card className="space-y-3 p-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold">{t('إعدادات المطعم', 'Restaurant settings')}</h3>
-        <Button variant="ghost" onClick={() => void load()}>{t('تحديث', 'Refresh')}</Button>
+    <Card className="space-y-4 rounded-3xl bg-surface/95 p-5 shadow-elevate backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="font-heading text-xl font-semibold">{t('إعدادات المطعم', 'Restaurant settings')}</h3>
+        <Button variant="secondary" onClick={() => void load()}>
+          {t('تحديث', 'Refresh')}
+        </Button>
       </div>
 
       {loading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-11 w-full rounded-full" />
-          <Skeleton className="h-11 w-full rounded-full" />
-          <Skeleton className="h-11 w-full rounded-full" />
+        <div className="space-y-3">
+          <Skeleton className="h-14 w-full rounded-2xl" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
         </div>
       ) : (
         <>
-          <Input value={form.restaurant_name_ar} onChange={(e) => setForm((f) => ({ ...f, restaurant_name_ar: e.target.value }))} placeholder={t('اسم المطعم بالعربية', 'Restaurant name (AR)')} />
-          <Input value={form.restaurant_name_en} onChange={(e) => setForm((f) => ({ ...f, restaurant_name_en: e.target.value }))} placeholder={t('اسم المطعم بالإنجليزية', 'Restaurant name (EN)')} />
-          <Input value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value.toUpperCase() }))} placeholder={t('العملة', 'Currency')} />
+          <FloatingField label={t('اسم المطعم بالعربية', 'Restaurant name (AR)')}>
+            <Input value={form.restaurant_name_ar} onChange={(e) => setForm((f) => ({ ...f, restaurant_name_ar: e.target.value }))} placeholder=" " className="pt-6" />
+          </FloatingField>
+          <FloatingField label={t('اسم المطعم بالإنجليزية', 'Restaurant name (EN)')}>
+            <Input value={form.restaurant_name_en} onChange={(e) => setForm((f) => ({ ...f, restaurant_name_en: e.target.value }))} placeholder=" " className="pt-6" />
+          </FloatingField>
+          <FloatingField label={t('العملة', 'Currency')}>
+            <Input value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value.toUpperCase() }))} placeholder=" " className="pt-6" />
+          </FloatingField>
         </>
       )}
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      <Button className="w-full" onClick={() => void save()} disabled={saving || loading}>{saving ? t('جارٍ الحفظ...', 'Saving...') : t('حفظ الإعدادات', 'Save settings')}</Button>
+      {error ? <p className="rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p> : null}
+      <Button className="w-full" onClick={() => void save()} disabled={saving || loading}>
+        {saving ? t('جارٍ الحفظ...', 'Saving...') : t('حفظ الإعدادات', 'Save settings')}
+      </Button>
     </Card>
   );
 }

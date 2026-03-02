@@ -1,6 +1,12 @@
 import { useSyncExternalStore } from 'react';
 
 const STORAGE_KEY = 'qr-menu-local-bill';
+const STORAGE_VERSION = 2;
+
+type StoredBill = {
+  version: number;
+  data: BillState;
+};
 
 export type BillItem = {
   id: string;
@@ -42,20 +48,20 @@ const defaultState: BillState = {
   smartSplit: []
 };
 
-function clampNumber(value: number) {
-  if (Number.isNaN(value) || !Number.isFinite(value)) return 0;
-  return Math.max(0, value);
+function clampNumber(value: number, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  if (Number.isNaN(value) || !Number.isFinite(value)) return min;
+  return Math.min(max, Math.max(min, value));
 }
 
 function normalizeSmartSplit(state: BillState): BillState {
-  const peopleCount = Math.max(1, Math.floor(state.peopleCount || 1));
+  const peopleCount = clampNumber(Math.floor(state.peopleCount || 1), 1, 20);
   const personIds = Array.from({ length: peopleCount }, (_, idx) => String(idx + 1));
 
   const nextSmartSplit: SmartSplitPerson[] = personIds.map((personId) => {
     const existing = state.smartSplit.find((person) => person.personId === personId);
     const normalizedItems = state.items
       .map((item) => {
-        const qty = Math.max(0, Math.floor(existing?.items.find((entry) => entry.itemId === item.id)?.qty ?? 0));
+        const qty = clampNumber(Math.floor(existing?.items.find((entry) => entry.itemId === item.id)?.qty ?? 0));
         return { itemId: item.id, qty };
       })
       .filter((entry) => entry.qty > 0);
@@ -69,7 +75,6 @@ function normalizeSmartSplit(state: BillState): BillState {
       qtyByItem.set(entry.itemId, (qtyByItem.get(entry.itemId) ?? 0) + entry.qty);
     });
   });
-
 
   state.items.forEach((item) => {
     const assigned = qtyByItem.get(item.id) ?? 0;
@@ -92,6 +97,8 @@ function normalizeSmartSplit(state: BillState): BillState {
 
   return {
     ...state,
+    taxPercent: clampNumber(state.taxPercent, 0, 100),
+    discountValue: clampNumber(state.discountValue),
     peopleCount,
     smartSplit: nextSmartSplit,
     splitMode: state.splitMode
@@ -101,12 +108,16 @@ function normalizeSmartSplit(state: BillState): BillState {
 function loadState(): BillState {
   if (typeof window === 'undefined') return defaultState;
 
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return defaultState;
-
   try {
-    const parsed = JSON.parse(raw) as Partial<BillState>;
-    return normalizeSmartSplit({ ...defaultState, ...parsed, items: parsed.items ?? defaultState.items, smartSplit: parsed.smartSplit ?? defaultState.smartSplit });
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultState;
+    const parsed = JSON.parse(raw) as Partial<StoredBill | BillState>;
+
+    if ('version' in parsed && parsed.version === STORAGE_VERSION && parsed.data) {
+      return normalizeSmartSplit({ ...defaultState, ...parsed.data, items: parsed.data.items ?? defaultState.items, smartSplit: parsed.data.smartSplit ?? defaultState.smartSplit });
+    }
+
+    return normalizeSmartSplit({ ...defaultState, ...(parsed as Partial<BillState>), items: (parsed as Partial<BillState>).items ?? defaultState.items, smartSplit: (parsed as Partial<BillState>).smartSplit ?? defaultState.smartSplit });
   } catch {
     return defaultState;
   }
@@ -118,7 +129,12 @@ const listeners = new Set<() => void>();
 function emit(nextState: BillState) {
   state = normalizeSmartSplit(nextState);
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      const payload: StoredBill = { version: STORAGE_VERSION, data: state };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore write errors from private mode / storage limits
+    }
   }
   listeners.forEach((listener) => listener());
 }
@@ -147,7 +163,7 @@ export const billActions = {
   },
   changeQty(itemId: string, delta: number) {
     const items = state.items
-      .map((entry) => (entry.id === itemId ? { ...entry, qty: Math.max(0, entry.qty + delta) } : entry))
+      .map((entry) => (entry.id === itemId ? { ...entry, qty: clampNumber(entry.qty + delta) } : entry))
       .filter((entry) => entry.qty > 0);
 
     emit({ ...state, items });
@@ -159,7 +175,7 @@ export const billActions = {
     emit({ ...state, taxEnabled: enabled });
   },
   setTaxPercent(value: number) {
-    emit({ ...state, taxPercent: clampNumber(value) });
+    emit({ ...state, taxPercent: clampNumber(value, 0, 100) });
   },
   setDiscountEnabled(enabled: boolean) {
     emit({ ...state, discountEnabled: enabled });
@@ -174,7 +190,7 @@ export const billActions = {
     emit({ ...state, splitMode: value });
   },
   setPeopleCount(value: number) {
-    emit({ ...state, peopleCount: Math.max(1, Math.floor(value || 1)) });
+    emit({ ...state, peopleCount: clampNumber(Math.floor(value || 1), 1, 20) });
   },
   assignItem(personId: string, itemId: string, delta: number) {
     const targetItem = state.items.find((item) => item.id === itemId);
@@ -193,7 +209,7 @@ export const billActions = {
     const currentQty = person.items.find((entry) => entry.itemId === itemId)?.qty ?? 0;
     if (delta > 0 && assignedTotal >= targetItem.qty) return;
 
-    const nextQty = Math.max(0, currentQty + delta);
+    const nextQty = clampNumber(currentQty + delta);
     person.items = person.items.filter((entry) => entry.itemId !== itemId);
     if (nextQty > 0) person.items.push({ itemId, qty: nextQty });
 
@@ -214,7 +230,7 @@ export function getSubtotal(billState: BillState) {
 
 export function getTaxAmount(billState: BillState, subtotal: number) {
   if (!billState.taxEnabled) return 0;
-  return (subtotal * clampNumber(billState.taxPercent)) / 100;
+  return (subtotal * clampNumber(billState.taxPercent, 0, 100)) / 100;
 }
 
 export function getDiscountAmount(billState: BillState, subtotal: number) {
