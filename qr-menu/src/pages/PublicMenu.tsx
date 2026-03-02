@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Input from '../components/Input';
@@ -29,6 +29,7 @@ function formatPrice(price: number, currency: string, language: 'ar' | 'en') {
 
 export default function PublicMenu() {
   const { language, t } = useLanguage();
+  const searchRef = useRef<HTMLInputElement | null>(null);
   const [settings, setSettings] = useState<Settings | null>(cache?.settings ?? null);
   const [categories, setCategories] = useState<Category[]>(cache?.categories ?? []);
   const [items, setItems] = useState<MenuItem[]>(cache?.items ?? []);
@@ -115,25 +116,33 @@ export default function PublicMenu() {
   const billItemCount = getItemCount(billState);
 
   return (
-    <main className="pb-10 [content-visibility:auto]">
-      <header className="sticky top-0 z-30 -mx-4 border-b border-border/80 bg-bg/90 px-4 pb-3 pt-4 backdrop-blur-sm [transform:translateZ(0)]">
+    <main className="pb-28 [content-visibility:auto]">
+      <header className="sticky top-0 z-30 -mx-4 border-b border-border/80 bg-bg/95 px-4 pb-3 pt-4 backdrop-blur-sm [transform:translateZ(0)]">
         <div className="mb-3 flex items-center justify-between gap-3">
-          {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="text-2xl font-bold tracking-tight">{restaurantName}</h1>}
+          {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="text-2xl font-bold leading-tight tracking-tight">{restaurantName}</h1>}
           <LanguageToggle />
         </div>
 
         <div className="relative">
           <span className="pointer-events-none absolute inset-y-0 start-4 inline-flex items-center text-muted">⌕</span>
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('ابحث في القائمة', 'Search menu')} className="ps-10 pe-10" aria-label={t('بحث', 'Search')} />
+          <Input
+            ref={searchRef}
+            value={query}
+            onFocus={() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('ابحث في القائمة', 'Search menu')}
+            className="ps-10 pe-10"
+            aria-label={t('بحث', 'Search')}
+          />
           {query ? (
-            <button className="absolute inset-y-0 end-3 min-h-11 px-2 text-muted" onClick={() => setQuery('')} aria-label={t('مسح البحث', 'Clear search')}>
+            <button className="absolute inset-y-0 end-3 min-h-11 min-w-11 rounded-full px-2 text-muted transition hover:bg-surface2" onClick={() => setQuery('')} aria-label={t('مسح البحث', 'Clear search')}>
               ✕
             </button>
           ) : null}
         </div>
       </header>
 
-      <div className="sticky top-[116px] z-20 -mx-4 mb-4 border-b border-border/60 bg-bg/90 px-4 py-2 backdrop-blur-sm [transform:translateZ(0)]">
+      <div className="sticky top-[120px] z-20 -mx-4 mb-4 border-b border-border/60 bg-bg/95 px-4 py-2 backdrop-blur-sm [transform:translateZ(0)]">
         {loading ? (
           <div className="flex gap-2">
             <Skeleton className="h-11 w-20 rounded-full" />
@@ -211,7 +220,9 @@ export default function PublicMenu() {
 
       <button
         onClick={() => setBillOpen(true)}
-        className="fixed bottom-6 end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-accent px-4 py-2 font-semibold text-accentText shadow-elevate"
+        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-accent px-4 py-2 font-semibold text-accentText shadow-elevate transition-all duration-calm ease-calm"
+        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        aria-label={t('فتح الحساب', 'Open bill')}
       >
         <span>{t('الحساب', 'Bill')}</span>
         <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-black/20 px-2 text-sm">{billItemCount}</span>
