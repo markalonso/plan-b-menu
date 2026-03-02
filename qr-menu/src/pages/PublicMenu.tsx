@@ -117,7 +117,8 @@ export default function PublicMenu() {
 
   return (
     <main className="pb-28 [content-visibility:auto]">
-      <header className="sticky top-0 z-30 -mx-4 rounded-b-3xl border-b border-border/50 bg-[rgba(246,242,237,0.86)] px-4 pb-3 pt-4 shadow-soft backdrop-blur-md [transform:translateZ(0)]">
+      <div className="rounded-[28px] bg-[rgba(255,255,255,0.62)] p-3 shadow-soft backdrop-blur-sm md:p-5">
+      <header className="sticky top-0 z-30 rounded-3xl border border-border/40 bg-[rgba(246,242,237,0.88)] px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
         <div className="mb-3 flex items-center justify-between gap-3">
           {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight">{restaurantName}</h1>}
           <LanguageToggle />
@@ -142,7 +143,7 @@ export default function PublicMenu() {
         </div>
       </header>
 
-      <div className="sticky top-[124px] z-20 -mx-4 mb-4 bg-[rgba(246,242,237,0.94)] px-4 py-3 backdrop-blur-md [transform:translateZ(0)]">
+      <div className="sticky top-[126px] z-20 mb-4 rounded-2xl bg-[rgba(246,242,237,0.94)] px-2 py-2 backdrop-blur-md md:top-[134px] md:px-3">
         {loading ? (
           <div className="flex gap-2">
             <Skeleton className="h-11 w-20 rounded-full" />
@@ -167,7 +168,7 @@ export default function PublicMenu() {
           <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
         </Card>
       ) : loading ? (
-        <section className="space-y-3">
+        <section className="space-y-3 md:space-y-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="flex items-center gap-3 p-3">
               <Skeleton className="h-24 w-24 shrink-0 rounded-2xl" />
@@ -188,7 +189,7 @@ export default function PublicMenu() {
           <p className="text-sm text-muted">{debouncedQuery ? t('لا توجد نتائج مطابقة.', 'No matching items.') : t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
         </Card>
       ) : (
-        <section className="space-y-3">
+        <section className="space-y-3 md:space-y-4">
           {visibleItems.map((item) => {
             const name = language === 'ar' ? item.name_ar : item.name_en;
             const description = (language === 'ar' ? item.desc_ar : item.desc_en) || t('وصف مختصر للطبق.', 'A short dish description.');
@@ -220,7 +221,7 @@ export default function PublicMenu() {
 
       <button
         onClick={() => setBillOpen(true)}
-        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accentText shadow-soft transition-all duration-calm ease-calm"
+        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accentText shadow-elevate transition-all duration-calm ease-calm"
         style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
         aria-label={t('فتح الحساب', 'Open bill')}
       >
@@ -229,6 +230,7 @@ export default function PublicMenu() {
       </button>
 
       <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />
+      </div>
     </main>
   );
 }

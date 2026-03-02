@@ -9,9 +9,12 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-bg pb-10 pt-6 text-text">
       <Container>
-        <header className="mb-5 space-y-3 rounded-3xl bg-[rgba(255,255,255,0.75)] p-4 shadow-soft backdrop-blur-sm">
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="font-heading text-3xl font-semibold tracking-tight">{t('لوحة الإدارة', 'Admin Panel')}</h1>
+        <header className="mb-5 space-y-3 rounded-3xl bg-[rgba(255,255,255,0.78)] p-4 shadow-soft backdrop-blur-sm">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-muted">Plan B Console</p>
+              <h1 className="font-heading text-3xl font-semibold tracking-tight">{t('لوحة الإدارة', 'Admin Panel')}</h1>
+            </div>
             <LanguageToggle />
           </div>
           <Link className="inline-flex min-h-11 items-center rounded-full bg-[color:var(--accentSoft)] px-4 text-sm font-medium text-accent" to="/">
