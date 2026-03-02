@@ -2,19 +2,21 @@
   --bg: #f6f2ed;
   --surface: #ffffff;
   --surface2: #fdfaf7;
-  --text: #1e1e1e;
+  --text: #1a1917;
   --muted: #6e6a66;
   --border: #e9e4de;
   --accent: #8b6b4f;
   --accentText: #ffffff;
-  --accentSoft: #e8ddd1;
+  --accentSoft: #ede5da;
+  --divider: rgba(139, 107, 79, 0.14);
 
   --r-xl: 1rem;
   --r-2xl: 18px;
   --r-3xl: 28px;
 
-  --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 25px 60px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 2px 16px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 20px 60px rgba(0, 0, 0, 0.10), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-overlay: 0 32px 80px rgba(0, 0, 0, 0.22);
 
   --grain-opacity: 0;
 }
