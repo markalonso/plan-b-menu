@@ -119,7 +119,7 @@ export default function Admin() {
         {section === 'settings' ? <SettingsSection notify={setToast} /> : null}
       </div>
 
-      <nav className="fixed inset-x-4 bottom-4 z-40 rounded-2xl border border-border bg-surface p-2 shadow-elevate">
+      <nav className="fixed inset-x-4 z-40 rounded-2xl border border-border bg-surface p-2 shadow-elevate" style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}>
         <div className="grid grid-cols-4 gap-2">
           {nav.map((tab) => (
             <Button key={tab.key} variant={section === tab.key ? 'primary' : 'secondary'} onClick={() => setSection(tab.key)}>

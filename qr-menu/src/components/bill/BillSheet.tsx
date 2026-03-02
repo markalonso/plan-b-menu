@@ -45,6 +45,11 @@ export default function BillSheet({
     }
   }, [activePerson, personIds]);
 
+  function parseNumeric(value: string) {
+    const next = Number(value);
+    return Number.isFinite(next) ? next : 0;
+  }
+
   function selectSplitMode(mode: SplitMode) {
     billActions.setSplitMode(mode);
     if (mode === 'smart') {
@@ -78,16 +83,16 @@ export default function BillSheet({
                       <p className="font-medium">{language === 'ar' ? item.name_ar : item.name_en}</p>
                       <p className="text-sm text-muted">{formatPrice(item.price, currency, language)}</p>
                     </div>
-                    <Button variant="ghost" className="px-2" onClick={() => billActions.removeItem(item.id)}>
+                    <Button variant="ghost" className="min-h-11 px-3" onClick={() => billActions.removeItem(item.id)} aria-label={t('حذف الصنف', 'Remove item')}>
                       {t('حذف', 'Remove')}
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="secondary" className="h-10 min-h-10 w-10 rounded-xl px-0" onClick={() => billActions.changeQty(item.id, -1)}>
+                    <Button variant="secondary" className="h-11 min-h-11 w-11 rounded-xl px-0" onClick={() => billActions.changeQty(item.id, -1)} aria-label={t('تقليل الكمية', 'Decrease quantity')}>
                       -
                     </Button>
                     <span className="w-8 text-center font-semibold">{item.qty}</span>
-                    <Button variant="secondary" className="h-10 min-h-10 w-10 rounded-xl px-0" onClick={() => billActions.changeQty(item.id, 1)}>
+                    <Button variant="secondary" className="h-11 min-h-11 w-11 rounded-xl px-0" onClick={() => billActions.changeQty(item.id, 1)} aria-label={t('زيادة الكمية', 'Increase quantity')}>
                       +
                     </Button>
                   </div>
@@ -109,7 +114,9 @@ export default function BillSheet({
             type="number"
             min={0}
             value={state.taxPercent}
-            onChange={(event) => billActions.setTaxPercent(Number(event.target.value))}
+            inputMode="decimal"
+            max={100}
+            onChange={(event) => billActions.setTaxPercent(parseNumeric(event.target.value))}
             placeholder="0"
             disabled={!state.taxEnabled}
           />
@@ -135,7 +142,8 @@ export default function BillSheet({
             type="number"
             min={0}
             value={state.discountValue}
-            onChange={(event) => billActions.setDiscountValue(Number(event.target.value))}
+            inputMode="decimal"
+            onChange={(event) => billActions.setDiscountValue(parseNumeric(event.target.value))}
             placeholder="0"
             disabled={!state.discountEnabled}
           />
@@ -158,7 +166,7 @@ export default function BillSheet({
             </Button>
           </div>
 
-          {state.splitMode !== 'none' ? <Input type="number" min={1} value={state.peopleCount} onChange={(event) => billActions.setPeopleCount(Number(event.target.value))} /> : null}
+          {state.splitMode !== 'none' ? <Input type="number" min={1} max={20} inputMode="numeric" value={state.peopleCount} onChange={(event) => billActions.setPeopleCount(parseNumeric(event.target.value))} /> : null}
 
           {state.splitMode === 'equal' ? (
             <p className="text-sm font-semibold">
@@ -167,13 +175,25 @@ export default function BillSheet({
           ) : null}
 
           {state.splitMode === 'smart' ? (
-            <div className="space-y-3">
+            <div className="space-y-3"> 
               <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
                 {personIds.map((personId, idx) => (
                   <Button key={personId} variant={activePerson === personId ? 'primary' : 'secondary'} className="whitespace-nowrap" onClick={() => setActivePerson(personId)}>
                     {t('الشخص', 'Person')} {idx + 1}
                   </Button>
                 ))}
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {personIds.map((personId, idx) => {
+                  const summary = getSmartPersonSummary(state, personId);
+                  return (
+                    <div key={`summary-${personId}`} className="rounded-xl border border-border/80 bg-surface p-2 text-xs text-muted">
+                      <p className="font-semibold text-text">{t('الشخص', 'Person')} {idx + 1}</p>
+                      <p>{t('الإجمالي', 'Total')}: {formatPrice(summary.total, currency, language)}</p>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="rounded-2xl border border-border bg-surface p-3 space-y-2">
@@ -187,11 +207,11 @@ export default function BillSheet({
                       <div key={`${activePerson}-${item.id}`} className="flex items-center justify-between gap-2 text-sm">
                         <span>{language === 'ar' ? item.name_ar : item.name_en}</span>
                         <div className="flex items-center gap-2">
-                          <Button variant="secondary" className="h-9 min-h-9 w-9 rounded-xl px-0" onClick={() => billActions.assignItem(activePerson, item.id, -1)}>
+                          <Button variant="secondary" className="h-11 min-h-11 w-11 rounded-xl px-0" onClick={() => billActions.assignItem(activePerson, item.id, -1)} aria-label={t('تقليل حصة الصنف', 'Decrease assigned quantity')}>
                             -
                           </Button>
                           <span className="w-6 text-center">{assigned}</span>
-                          <Button variant="secondary" className="h-9 min-h-9 w-9 rounded-xl px-0" onClick={() => billActions.assignItem(activePerson, item.id, 1)}>
+                          <Button variant="secondary" className="h-11 min-h-11 w-11 rounded-xl px-0" onClick={() => billActions.assignItem(activePerson, item.id, 1)} aria-label={t('زيادة حصة الصنف', 'Increase assigned quantity')}>
                             +
                           </Button>
                         </div>

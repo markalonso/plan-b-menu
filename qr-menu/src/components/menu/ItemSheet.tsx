@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import BottomSheet from '../BottomSheet';
 import Button from '../Button';
 import Chip from '../Chip';
@@ -22,18 +23,38 @@ export default function ItemSheet({
   currency: string;
   formatPrice: (price: number, currency: string, language: 'ar' | 'en') => string;
 }) {
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const name = item ? (language === 'ar' ? item.name_ar : item.name_en) : '';
   const desc = item ? (language === 'ar' ? item.desc_ar ?? '' : item.desc_en ?? '') : '';
+
+  useEffect(() => {
+    setImageFailed(false);
+    setImageLoading(Boolean(item?.image_url));
+  }, [item?.id, item?.image_url]);
 
   return (
     <BottomSheet open={open} onClose={onClose} title={name}>
       {item ? (
         <div className="space-y-4">
-          {item.image_url ? (
-            <img src={item.image_url} alt={name} loading="lazy" decoding="async" className="h-52 w-full rounded-3xl border border-border object-cover" />
-          ) : (
-            <div className="h-52 w-full rounded-3xl border border-border bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" />
-          )}
+          <div className="relative h-52 w-full overflow-hidden rounded-3xl border border-border bg-surface2">
+            {item.image_url && !imageFailed ? (
+              <img
+                src={item.image_url}
+                alt={name}
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setImageLoading(false)}
+                onError={() => {
+                  setImageLoading(false);
+                  setImageFailed(true);
+                }}
+                onLoadStart={() => setImageLoading(true)}
+                className="h-full w-full object-cover"
+              />
+            ) : null}
+            {imageLoading || !item.image_url || imageFailed ? <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" /> : null}
+          </div>
 
           <p className="text-base text-muted">{desc || t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}</p>
 
