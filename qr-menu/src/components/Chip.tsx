@@ -9,8 +9,8 @@ export default function Chip({ active = false, className, ...props }: ChipProps)
   return (
     <button
       className={cn(
-        'min-h-11 rounded-full border px-4 text-sm font-medium transition-all duration-calm ease-calm',
-        active ? 'border-accent bg-accent text-accentText' : 'border-border bg-surface text-muted hover:text-text',
+        'min-h-11 rounded-full px-4 text-sm font-medium shadow-soft transition-all duration-calm ease-calm',
+        active ? 'bg-accent text-accentText' : 'bg-[color:var(--accentSoft)] text-muted hover:bg-surface hover:text-text',
         className
       )}
       {...props}

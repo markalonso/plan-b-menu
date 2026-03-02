@@ -24,20 +24,21 @@ export default {
         '3xl': 'var(--r-3xl)'
       },
       transitionTimingFunction: {
-        calm: 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+        calm: 'ease'
       },
       transitionDuration: {
-        calm: '180ms'
+        calm: '300ms'
       },
       fontFamily: {
-        sans: ['var(--font-family)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif']
+        sans: ['var(--font-family)', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Playfair Display', 'serif']
       },
       fontSize: {
         sm: ['0.92rem', { lineHeight: '1.6' }],
-        base: ['1rem', { lineHeight: '1.75' }],
-        lg: ['1.1rem', { lineHeight: '1.75' }],
-        xl: ['1.25rem', { lineHeight: '1.6' }],
-        '2xl': ['1.5rem', { lineHeight: '1.5' }]
+        base: ['1rem', { lineHeight: '1.7' }],
+        lg: ['1.1rem', { lineHeight: '1.7' }],
+        xl: ['1.25rem', { lineHeight: '1.45' }],
+        '2xl': ['1.75rem', { lineHeight: '1.3' }]
       }
     }
   },

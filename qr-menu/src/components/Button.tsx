@@ -9,9 +9,9 @@ export default function Button({ className, variant = 'primary', ...props }: Pro
   return (
     <button
       className={cn(
-        'inline-flex min-h-11 items-center justify-center rounded-2xl px-5 text-[0.95rem] font-semibold transition-all duration-calm ease-calm active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed',
-        variant === 'primary' && 'bg-accent text-accentText shadow-soft hover:brightness-[0.97]',
-        variant === 'secondary' && 'border border-border bg-surface text-text shadow-soft hover:bg-surface2',
+        'inline-flex min-h-11 items-center justify-center rounded-full px-5 text-[0.95rem] font-semibold transition-all duration-calm ease-calm active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50',
+        variant === 'primary' && 'bg-accent text-accentText shadow-soft hover:-translate-y-0.5 hover:brightness-[0.98]',
+        variant === 'secondary' && 'bg-[color:var(--accentSoft)] text-text shadow-soft hover:-translate-y-0.5 hover:brightness-[0.99]',
         variant === 'ghost' && 'bg-transparent text-muted hover:bg-surface2 hover:text-text',
         className
       )}
