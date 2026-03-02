@@ -24,14 +24,14 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
       className={cn('fixed inset-0 z-50 transition-opacity duration-calm ease-calm', open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0')}
       aria-hidden={!open}
     >
-      <button className="absolute inset-0 bg-black/25 transition-opacity duration-calm ease-calm" onClick={onClose} aria-label="Close sheet" />
+      <button className="absolute inset-0 bg-[#1e1e1e]/28 backdrop-blur-[2px] transition-opacity duration-calm ease-calm" onClick={onClose} aria-label="Close sheet" />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          'absolute inset-x-0 bottom-0 rounded-t-3xl border border-border bg-surface p-5 shadow-elevate transition-transform duration-[220ms] ease-calm will-change-transform',
+          'absolute inset-x-0 bottom-0 rounded-t-3xl bg-white p-5 shadow-elevate transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
           open ? 'translate-y-0' : 'translate-y-full'
         )}
         style={{

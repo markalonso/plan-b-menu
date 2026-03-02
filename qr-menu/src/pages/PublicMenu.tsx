@@ -117,9 +117,9 @@ export default function PublicMenu() {
 
   return (
     <main className="pb-28 [content-visibility:auto]">
-      <header className="sticky top-0 z-30 -mx-4 border-b border-border/80 bg-bg/95 px-4 pb-3 pt-4 backdrop-blur-sm [transform:translateZ(0)]">
+      <header className="sticky top-0 z-30 -mx-4 rounded-b-3xl border-b border-border/50 bg-[rgba(246,242,237,0.86)] px-4 pb-3 pt-4 shadow-soft backdrop-blur-md [transform:translateZ(0)]">
         <div className="mb-3 flex items-center justify-between gap-3">
-          {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="text-2xl font-bold leading-tight tracking-tight">{restaurantName}</h1>}
+          {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight">{restaurantName}</h1>}
           <LanguageToggle />
         </div>
 
@@ -142,7 +142,7 @@ export default function PublicMenu() {
         </div>
       </header>
 
-      <div className="sticky top-[120px] z-20 -mx-4 mb-4 border-b border-border/60 bg-bg/95 px-4 py-2 backdrop-blur-sm [transform:translateZ(0)]">
+      <div className="sticky top-[124px] z-20 -mx-4 mb-4 bg-[rgba(246,242,237,0.94)] px-4 py-3 backdrop-blur-md [transform:translateZ(0)]">
         {loading ? (
           <div className="flex gap-2">
             <Skeleton className="h-11 w-20 rounded-full" />
@@ -220,12 +220,12 @@ export default function PublicMenu() {
 
       <button
         onClick={() => setBillOpen(true)}
-        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-accent px-4 py-2 font-semibold text-accentText shadow-elevate transition-all duration-calm ease-calm"
+        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accentText shadow-soft transition-all duration-calm ease-calm"
         style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
         aria-label={t('فتح الحساب', 'Open bill')}
       >
         <span>{t('الحساب', 'Bill')}</span>
-        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-black/20 px-2 text-sm">{billItemCount}</span>
+        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/20 px-2 text-sm">{billItemCount}</span>
       </button>
 
       <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />

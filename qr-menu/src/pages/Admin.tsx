@@ -73,7 +73,7 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <Card className="space-y-2 p-4">
+      <Card className="space-y-2 rounded-3xl bg-surface/95 p-4 shadow-elevate">
         <div className="h-5 w-1/2 animate-pulse rounded bg-surface2" />
         <div className="h-11 w-full animate-pulse rounded-full bg-surface2" />
       </Card>
@@ -106,9 +106,9 @@ export default function Admin() {
 
   return (
     <>
-      <div className="space-y-3 pb-24">
+      <div className="space-y-4 pb-24">
         {error ? (
-          <Card className="space-y-2 p-4">
+          <Card className="space-y-2 rounded-3xl bg-surface/95 p-4 shadow-elevate">
             <p className="text-sm text-red-600">{error}</p>
             <Button variant="secondary" onClick={() => void refreshAuth()}>{t('إعادة المحاولة', 'Retry')}</Button>
           </Card>
@@ -119,7 +119,7 @@ export default function Admin() {
         {section === 'settings' ? <SettingsSection notify={setToast} /> : null}
       </div>
 
-      <nav className="fixed inset-x-4 z-40 rounded-2xl border border-border bg-surface p-2 shadow-elevate" style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+      <nav className="fixed inset-x-4 z-40 rounded-3xl bg-[rgba(255,255,255,0.92)] p-2 shadow-elevate backdrop-blur-sm" style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}>
         <div className="grid grid-cols-4 gap-2">
           {nav.map((tab) => (
             <Button key={tab.key} variant={section === tab.key ? 'primary' : 'secondary'} onClick={() => setSection(tab.key)}>
