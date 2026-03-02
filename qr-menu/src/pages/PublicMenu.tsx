@@ -7,7 +7,9 @@ import Skeleton from '../components/Skeleton';
 import CategoryTabs from '../components/menu/CategoryTabs';
 import ItemSheet from '../components/menu/ItemSheet';
 import MenuCard from '../components/menu/MenuCard';
+import BillSheet from '../components/bill/BillSheet';
 import { getCategories, getItems, getSettings, type Category, type MenuItem, type Settings } from '../lib/api/menu';
+import { billActions, getItemCount, useBillStore } from '../lib/bill/store';
 import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
 
@@ -34,8 +36,10 @@ export default function PublicMenu() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [billOpen, setBillOpen] = useState(false);
   const [loading, setLoading] = useState(!cache);
   const [error, setError] = useState('');
+  const billState = useBillStore();
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedQuery(query), 200);
@@ -98,9 +102,17 @@ export default function PublicMenu() {
   const currency = settings?.currency ?? 'EGP';
 
   function addToBill(item: MenuItem) {
-    console.log('addToBill stub', item.id);
+    const fallbackId = `${item.name_en}-${item.price}`;
+    billActions.addItem({
+      id: item.id ?? fallbackId,
+      name_ar: item.name_ar,
+      name_en: item.name_en,
+      price: item.price
+    });
     setSelectedItem(null);
   }
+
+  const billItemCount = getItemCount(billState);
 
   return (
     <main className="pb-10 [content-visibility:auto]">
@@ -196,6 +208,16 @@ export default function PublicMenu() {
         currency={currency}
         formatPrice={formatPrice}
       />
+
+      <button
+        onClick={() => setBillOpen(true)}
+        className="fixed bottom-6 end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-accent px-4 py-2 font-semibold text-accentText shadow-elevate"
+      >
+        <span>{t('الحساب', 'Bill')}</span>
+        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-black/20 px-2 text-sm">{billItemCount}</span>
+      </button>
+
+      <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />
     </main>
   );
 }
