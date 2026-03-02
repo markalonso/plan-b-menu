@@ -36,8 +36,12 @@ export default function ItemSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title={name}>
       {item ? (
-        <div className="space-y-4">
-          <div className="relative h-52 w-full overflow-hidden rounded-3xl border border-border bg-surface2">
+        <div className="space-y-5 pb-2">
+          {/* Hero image — full-width, generous aspect ratio */}
+          <div
+            className="relative -mx-6 overflow-hidden bg-surface2"
+            style={{ aspectRatio: '4/3' }}
+          >
             {item.image_url && !imageFailed ? (
               <img
                 src={item.image_url}
@@ -53,11 +57,23 @@ export default function ItemSheet({
                 className="h-full w-full object-cover"
               />
             ) : null}
-            {imageLoading || !item.image_url || imageFailed ? <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" /> : null}
+            {imageLoading || !item.image_url || imageFailed ? (
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--accentSoft)]/50 to-surface2" aria-hidden="true" />
+            ) : null}
           </div>
 
-          <p className="text-base text-muted">{desc || t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}</p>
+          {/* Description */}
+          {desc ? (
+            <p className="text-base leading-relaxed text-muted">
+              {desc}
+            </p>
+          ) : (
+            <p className="text-base leading-relaxed text-muted/60 italic">
+              {t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}
+            </p>
+          )}
 
+          {/* Tags */}
           {item.tags?.length ? (
             <div className="flex flex-wrap gap-2">
               {item.tags.map((tag) => (
@@ -66,9 +82,15 @@ export default function ItemSheet({
             </div>
           ) : null}
 
-          <div className="rounded-2xl bg-surface2 px-4 py-3 text-lg font-bold text-accent">{formatPrice(item.price, currency, language)}</div>
+          {/* Price — prominent, centered */}
+          <div className="text-center py-2">
+            <span className="font-heading text-3xl font-semibold text-accent">
+              {formatPrice(item.price, currency, language)}
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 gap-2">
+          {/* Actions */}
+          <div className="grid gap-2 pb-2">
             <Button onClick={() => onAdd(item)}>{t('أضف للحساب', 'Add to bill')}</Button>
             <Button variant="secondary" onClick={onClose}>
               {t('إغلاق', 'Close')}

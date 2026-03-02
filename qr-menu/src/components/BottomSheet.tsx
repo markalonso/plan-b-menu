@@ -24,36 +24,69 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
 
   return createPortal(
     <div
-      className={cn('fixed inset-0 z-[100] transition-opacity duration-calm ease-calm', open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0')}
+      className={cn(
+        'fixed inset-0 z-[100] flex items-end justify-center transition-opacity duration-300 ease-out sm:items-center',
+        open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+      )}
       aria-hidden={!open}
     >
-      <button className="absolute inset-0 bg-[#1e1e1e]/32 backdrop-blur-[3px] transition-opacity duration-calm ease-calm" onClick={onClose} aria-label="Close sheet" />
+      {/* Backdrop — soft dark veil, no harsh blur */}
+      <button
+        className="absolute inset-0 bg-[#110e0a]/50"
+        style={{ transition: 'opacity 300ms ease' }}
+        onClick={onClose}
+        aria-label="Close sheet"
+        tabIndex={-1}
+      />
 
+      {/* Panel — slides up on mobile, scales in on desktop */}
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          'absolute inset-x-0 bottom-0 mx-auto w-full max-w-3xl rounded-t-3xl bg-white p-5 shadow-elevate transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
-          open ? 'translate-y-0' : 'translate-y-full'
+          'relative z-10 w-full bg-[var(--surface)] shadow-[var(--shadow-overlay)]',
+          'rounded-t-[var(--r-3xl)] sm:rounded-[var(--r-3xl)]',
+          'sm:mx-4 sm:w-full sm:max-w-lg',
+          'transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
+          open ? 'translate-y-0 sm:scale-100' : 'translate-y-full sm:translate-y-0 sm:scale-95'
         )}
         style={{
-          paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))',
-          maxHeight: 'min(88dvh, 760px)'
+          paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))',
+          maxHeight: 'min(92dvh, 780px)'
         }}
       >
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <div className="mx-auto h-1.5 w-12 rounded-full bg-border" aria-hidden="true" />
-          <button className="-me-2 min-h-11 min-w-11 rounded-full text-muted transition hover:bg-surface2 hover:text-text" onClick={onClose} aria-label="Close sheet">
+        {/* Drag handle (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden" aria-hidden="true">
+          <div className="h-1 w-10 rounded-full bg-[var(--border)]" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 px-6 py-4">
+          {title ? (
+            <h3 id={titleId} className="font-heading text-xl font-semibold text-text">
+              {title}
+            </h3>
+          ) : (
+            <span />
+          )}
+          <button
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-surface2 hover:text-text"
+            onClick={onClose}
+            aria-label="Close sheet"
+          >
             ✕
           </button>
         </div>
-        {title ? (
-          <h3 id={titleId} className="mb-2 text-xl font-bold text-text">
-            {title}
-          </h3>
-        ) : null}
-        <div className="no-scrollbar overflow-y-auto overscroll-contain" style={{ maxHeight: 'calc(min(88dvh, 760px) - 6.5rem)' }}>
+
+        {/* Thin divider */}
+        <div className="h-px bg-[var(--border)]" aria-hidden="true" />
+
+        {/* Scrollable content */}
+        <div
+          className="no-scrollbar overflow-y-auto overscroll-contain px-6 pt-5"
+          style={{ maxHeight: 'calc(min(92dvh, 780px) - 7rem)' }}
+        >
           {children}
         </div>
       </section>

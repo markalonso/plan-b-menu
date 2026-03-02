@@ -116,39 +116,55 @@ export default function PublicMenu() {
   const billItemCount = getItemCount(billState);
 
   return (
-    <main className="pb-28 [content-visibility:auto]">
-      <div className="rounded-[28px] bg-[rgba(255,255,255,0.62)] p-3 shadow-soft backdrop-blur-sm md:p-5">
-      <header className="sticky top-0 z-30 rounded-3xl border border-border/40 bg-[rgba(246,242,237,0.88)] px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          {loading ? <Skeleton className="h-8 w-44" /> : <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight">{restaurantName}</h1>}
+    <main className="[content-visibility:auto]">
+      {/* ─── Identity Space ─── */}
+      <header className="mb-8 lg:mb-12">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-muted/70">{t('قائمة الطعام', 'Menu')}</p>
+            {loading ? (
+              <Skeleton className="h-10 w-52" />
+            ) : (
+              <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight lg:text-5xl">{restaurantName}</h1>
+            )}
+          </div>
           <LanguageToggle />
         </div>
 
-        <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 start-4 inline-flex items-center text-muted">⌕</span>
-          <Input
-            ref={searchRef}
-            value={query}
-            onFocus={() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('ابحث في القائمة', 'Search menu')}
-            className="ps-10 pe-10"
-            aria-label={t('بحث', 'Search')}
-          />
-          {query ? (
-            <button className="absolute inset-y-0 end-3 min-h-11 min-w-11 rounded-full px-2 text-muted transition hover:bg-surface2" onClick={() => setQuery('')} aria-label={t('مسح البحث', 'Clear search')}>
-              ✕
-            </button>
-          ) : null}
-        </div>
+        {/* Thin rule under identity */}
+        <div className="mt-6 h-px bg-[var(--divider)]" aria-hidden="true" />
       </header>
 
-      <div className="sticky top-[126px] z-20 mb-4 rounded-2xl bg-[rgba(246,242,237,0.94)] px-2 py-2 backdrop-blur-md md:top-[134px] md:px-3">
+      {/* ─── Search ─── */}
+      <div className="mb-8 relative">
+        <span className="pointer-events-none absolute inset-y-0 start-4 inline-flex items-center text-muted/60">⌕</span>
+        <Input
+          ref={searchRef}
+          value={query}
+          onFocus={() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('ابحث في القائمة', 'Search the menu')}
+          className="ps-10 pe-10 bg-white/70 backdrop-blur-sm border-[var(--divider)]"
+          aria-label={t('بحث', 'Search')}
+        />
+        {query ? (
+          <button
+            className="absolute inset-y-0 end-3 min-h-11 min-w-11 rounded-full px-2 text-muted/60 transition hover:text-text"
+            onClick={() => setQuery('')}
+            aria-label={t('مسح البحث', 'Clear search')}
+          >
+            ✕
+          </button>
+        ) : null}
+      </div>
+
+      {/* ─── Category Navigation — spatial section, not tabs glued to top ─── */}
+      <div className="mb-8">
         {loading ? (
-          <div className="flex gap-2">
-            <Skeleton className="h-11 w-20 rounded-full" />
-            <Skeleton className="h-11 w-24 rounded-full" />
-            <Skeleton className="h-11 w-24 rounded-full" />
+          <div className="flex gap-3">
+            <Skeleton className="h-9 w-16 rounded-full" />
+            <Skeleton className="h-9 w-20 rounded-full" />
+            <Skeleton className="h-9 w-20 rounded-full" />
           </div>
         ) : (
           <CategoryTabs
@@ -162,17 +178,18 @@ export default function PublicMenu() {
         )}
       </div>
 
+      {/* ─── Menu Items — calm editorial grid ─── */}
       {error ? (
-        <Card className="space-y-3 p-5 text-center">
+        <div className="py-12 text-center space-y-4">
           <p className="text-sm text-muted">{error}</p>
           <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
-        </Card>
+        </div>
       ) : loading ? (
-        <section className="space-y-3 md:space-y-4">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="flex items-center gap-3 p-3">
-              <Skeleton className="h-24 w-24 shrink-0 rounded-2xl" />
-              <div className="w-full space-y-2">
+            <Card key={i} className="overflow-hidden p-0">
+              <Skeleton className="h-44 w-full rounded-none rounded-t-2xl" />
+              <div className="space-y-2 p-4">
                 <Skeleton className="h-5 w-2/3" />
                 <Skeleton className="h-4 w-5/6" />
                 <Skeleton className="h-4 w-1/3" />
@@ -181,15 +198,15 @@ export default function PublicMenu() {
           ))}
         </section>
       ) : categories.length === 0 ? (
-        <Card className="p-6 text-center">
+        <div className="py-16 text-center">
           <p className="text-sm text-muted">{t('لا توجد فئات بعد. يمكن للمشرف إضافتها.', 'No categories yet. Admin can add categories.')}</p>
-        </Card>
+        </div>
       ) : visibleItems.length === 0 ? (
-        <Card className="p-6 text-center">
+        <div className="py-16 text-center">
           <p className="text-sm text-muted">{debouncedQuery ? t('لا توجد نتائج مطابقة.', 'No matching items.') : t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
-        </Card>
+        </div>
       ) : (
-        <section className="space-y-3 md:space-y-4">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {visibleItems.map((item) => {
             const name = language === 'ar' ? item.name_ar : item.name_en;
             const description = (language === 'ar' ? item.desc_ar : item.desc_en) || t('وصف مختصر للطبق.', 'A short dish description.');
@@ -219,18 +236,22 @@ export default function PublicMenu() {
         formatPrice={formatPrice}
       />
 
+      {/* ─── Bill Trigger — refined floating action ─── */}
       <button
         onClick={() => setBillOpen(true)}
-        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accentText shadow-elevate transition-all duration-calm ease-calm"
-        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="fixed end-5 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-[var(--text)] px-5 py-2.5 font-medium text-[var(--bg)] shadow-[var(--shadow-md)] transition-all duration-300 ease-out hover:opacity-90 active:scale-95"
+        style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
         aria-label={t('فتح الحساب', 'Open bill')}
       >
-        <span>{t('الحساب', 'Bill')}</span>
-        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/20 px-2 text-sm">{billItemCount}</span>
+        <span className="text-sm">{t('الحساب', 'Bill')}</span>
+        {billItemCount > 0 && (
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--bg)]/20 px-1.5 text-xs font-semibold">
+            {billItemCount}
+          </span>
+        )}
       </button>
 
       <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />
-      </div>
     </main>
   );
 }
