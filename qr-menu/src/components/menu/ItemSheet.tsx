@@ -36,8 +36,8 @@ export default function ItemSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title={name}>
       {item ? (
-        <div className="space-y-4">
-          <div className="relative h-52 w-full overflow-hidden rounded-3xl border border-border bg-surface2">
+        <div className="space-y-5 pb-1">
+          <div className="relative overflow-hidden rounded-[26px] bg-surface2">
             {item.image_url && !imageFailed ? (
               <img
                 src={item.image_url}
@@ -50,25 +50,30 @@ export default function ItemSheet({
                   setImageFailed(true);
                 }}
                 onLoadStart={() => setImageLoading(true)}
-                className="h-full w-full object-cover"
+                className="h-[240px] w-full object-cover md:h-[320px]"
               />
             ) : null}
-            {imageLoading || !item.image_url || imageFailed ? <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" /> : null}
+            {imageLoading || !item.image_url || imageFailed ? <div className="h-[240px] w-full animate-pulse bg-gradient-to-br from-surface2 to-surface md:h-[320px]" aria-hidden="true" /> : null}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
 
-          <p className="text-base text-muted">{desc || t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}</p>
+          <div className="rounded-3xl bg-surface2 p-4 md:p-5">
+            <p className="text-sm leading-7 text-muted md:text-base">{desc || t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}</p>
+            {item.tags?.length ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {item.tags.map((tag) => (
+                  <Chip key={tag}>{tag}</Chip>
+                ))}
+              </div>
+            ) : null}
+          </div>
 
-          {item.tags?.length ? (
-            <div className="flex flex-wrap gap-2">
-              {item.tags.map((tag) => (
-                <Chip key={tag}>{tag}</Chip>
-              ))}
-            </div>
-          ) : null}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-[color:var(--accentSoft)] px-4 py-3">
+            <p className="text-sm uppercase tracking-[0.18em] text-muted">{t('السعر', 'Price')}</p>
+            <p className="text-xl font-bold text-accent md:text-2xl">{formatPrice(item.price, currency, language)}</p>
+          </div>
 
-          <div className="rounded-2xl bg-surface2 px-4 py-3 text-lg font-bold text-accent">{formatPrice(item.price, currency, language)}</div>
-
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Button onClick={() => onAdd(item)}>{t('أضف للحساب', 'Add to bill')}</Button>
             <Button variant="secondary" onClick={onClose}>
               {t('إغلاق', 'Close')}

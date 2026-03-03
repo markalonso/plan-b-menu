@@ -69,15 +69,15 @@ export default function BillSheet({
 
   return (
     <BottomSheet open={open} onClose={onClose} title={t('حاسبة الحساب', 'Bill Preview')}>
-      <div className="space-y-5 pb-2">
-        <section className="space-y-3 rounded-2xl border border-border bg-surface2 p-3">
+      <div className="space-y-5 pb-2 md:space-y-6">
+        <section className="space-y-3 rounded-3xl bg-surface2/90 p-4 shadow-soft">
           <h4 className="font-semibold">{t('الأصناف', 'Items')}</h4>
           {state.items.length === 0 ? (
             <p className="text-sm text-muted">{t('لا توجد أصناف في الحساب بعد.', 'No items in bill yet.')}</p>
           ) : (
             <div className="space-y-2">
               {state.items.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-border bg-surface p-3">
+                <div key={item.id} className="rounded-2xl bg-surface p-3 shadow-soft">
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div>
                       <p className="font-medium">{language === 'ar' ? item.name_ar : item.name_en}</p>
@@ -105,7 +105,7 @@ export default function BillSheet({
           </div>
         </section>
 
-        <section className="space-y-3 rounded-2xl border border-border bg-surface2 p-3">
+        <section className="space-y-3 rounded-3xl bg-surface2/90 p-4 shadow-soft">
           <div className="flex items-center justify-between gap-2">
             <h4 className="font-semibold">{t('الضريبة', 'Tax')}</h4>
             <input type="checkbox" checked={state.taxEnabled} onChange={(event) => billActions.setTaxEnabled(event.target.checked)} className="h-5 w-5" />
@@ -125,7 +125,7 @@ export default function BillSheet({
           </p>
         </section>
 
-        <section className="space-y-3 rounded-2xl border border-border bg-surface2 p-3">
+        <section className="space-y-3 rounded-3xl bg-surface2/90 p-4 shadow-soft">
           <div className="flex items-center justify-between gap-2">
             <h4 className="font-semibold">{t('الخصم', 'Discount')}</h4>
             <input type="checkbox" checked={state.discountEnabled} onChange={(event) => billActions.setDiscountEnabled(event.target.checked)} className="h-5 w-5" />
@@ -152,7 +152,7 @@ export default function BillSheet({
           </p>
         </section>
 
-        <section className="space-y-3 rounded-2xl border border-border bg-surface2 p-3">
+        <section className="space-y-3 rounded-3xl bg-surface2/90 p-4 shadow-soft">
           <h4 className="font-semibold">{t('تقسيم الحساب', 'Split')}</h4>
           <div className="grid grid-cols-3 gap-2">
             <Button variant={state.splitMode === 'none' ? 'primary' : 'secondary'} onClick={() => selectSplitMode('none')}>
@@ -188,7 +188,7 @@ export default function BillSheet({
                 {personIds.map((personId, idx) => {
                   const summary = getSmartPersonSummary(state, personId);
                   return (
-                    <div key={`summary-${personId}`} className="rounded-xl border border-border/80 bg-surface p-2 text-xs text-muted">
+                    <div key={`summary-${personId}`} className="rounded-xl bg-surface p-2 text-xs text-muted shadow-soft">
                       <p className="font-semibold text-text">{t('الشخص', 'Person')} {idx + 1}</p>
                       <p>{t('الإجمالي', 'Total')}: {formatPrice(summary.total, currency, language)}</p>
                     </div>
@@ -196,7 +196,7 @@ export default function BillSheet({
                 })}
               </div>
 
-              <div className="rounded-2xl border border-border bg-surface p-3 space-y-2">
+              <div className="rounded-3xl bg-surface p-4 space-y-3 shadow-soft">
                 <p className="font-semibold">
                   {t('الشخص', 'Person')} {Number(activePerson)}
                 </p>
@@ -230,7 +230,7 @@ export default function BillSheet({
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-border bg-surface2 p-3">
+        <section className="rounded-3xl bg-[color:var(--accentSoft)] p-4">
           <p className="text-lg font-bold text-accent">
             {t('الإجمالي', 'Total')}: {formatPrice(total, currency, language)}
           </p>
