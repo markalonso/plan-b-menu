@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import BottomSheet from '../../components/BottomSheet';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
@@ -22,6 +22,15 @@ const emptyForm: MenuItem = {
   sort_order: 0,
   is_available: true
 };
+
+function FloatingField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="relative block">
+      {children}
+      <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{label}</span>
+    </label>
+  );
+}
 
 export default function Items({ notify }: { notify: (msg: string) => void }) {
   const { language, t } = useLanguage();
@@ -132,22 +141,42 @@ export default function Items({ notify }: { notify: (msg: string) => void }) {
   }
 
   return (
-    <div className="space-y-3">
-      <Card className="space-y-3 p-4">
-        <h3 className="text-lg font-bold">{t('إضافة / تعديل صنف', 'Create / Edit Item')}</h3>
-        <select className="min-h-11 w-full rounded-2xl border border-border bg-surface px-4" value={form.category_id ?? ''} onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value || null }))}>
-          <option value="">{t('بدون قسم', 'No category')}</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>{language === 'ar' ? c.name_ar : c.name_en}</option>
-          ))}
-        </select>
-        <Input placeholder={t('الاسم بالعربية', 'Arabic name')} value={form.name_ar} onChange={(e) => setForm((f) => ({ ...f, name_ar: e.target.value }))} />
-        <Input placeholder={t('الاسم بالإنجليزية', 'English name')} value={form.name_en} onChange={(e) => setForm((f) => ({ ...f, name_en: e.target.value }))} />
-        <textarea className="min-h-20 w-full rounded-2xl border border-border bg-surface px-4 py-3" placeholder={t('الوصف بالعربية', 'Arabic description')} value={form.desc_ar ?? ''} onChange={(e) => setForm((f) => ({ ...f, desc_ar: e.target.value }))} />
-        <textarea className="min-h-20 w-full rounded-2xl border border-border bg-surface px-4 py-3" placeholder={t('الوصف بالإنجليزية', 'English description')} value={form.desc_en ?? ''} onChange={(e) => setForm((f) => ({ ...f, desc_en: e.target.value }))} />
-        <Input type="number" placeholder={t('السعر', 'Price')} value={String(form.price)} onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value || 0) }))} />
+    <div className="space-y-4">
+      <Card className="space-y-4 rounded-3xl bg-surface/95 p-5 shadow-elevate backdrop-blur-sm">
+        <h3 className="font-heading text-xl font-semibold">{t('إضافة / تعديل صنف', 'Create / Edit Item')}</h3>
 
-        <div className="space-y-2">
+        <label className="relative block">
+          <select className="min-h-14 w-full rounded-2xl border border-border/70 bg-surface px-4 pt-6" value={form.category_id ?? ''} onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value || null }))}>
+            <option value="">{t('بدون قسم', 'No category')}</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{language === 'ar' ? c.name_ar : c.name_en}</option>
+            ))}
+          </select>
+          <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{t('القسم', 'Category')}</span>
+        </label>
+
+        <FloatingField label={t('الاسم بالعربية', 'Arabic name')}>
+          <Input placeholder=" " className="pt-6" value={form.name_ar} onChange={(e) => setForm((f) => ({ ...f, name_ar: e.target.value }))} />
+        </FloatingField>
+        <FloatingField label={t('الاسم بالإنجليزية', 'English name')}>
+          <Input placeholder=" " className="pt-6" value={form.name_en} onChange={(e) => setForm((f) => ({ ...f, name_en: e.target.value }))} />
+        </FloatingField>
+
+        <label className="relative block">
+          <textarea className="min-h-24 w-full rounded-2xl border border-border/70 bg-surface px-4 pt-7" placeholder=" " value={form.desc_ar ?? ''} onChange={(e) => setForm((f) => ({ ...f, desc_ar: e.target.value }))} />
+          <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{t('الوصف بالعربية', 'Arabic description')}</span>
+        </label>
+
+        <label className="relative block">
+          <textarea className="min-h-24 w-full rounded-2xl border border-border/70 bg-surface px-4 pt-7" placeholder=" " value={form.desc_en ?? ''} onChange={(e) => setForm((f) => ({ ...f, desc_en: e.target.value }))} />
+          <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{t('الوصف بالإنجليزية', 'English description')}</span>
+        </label>
+
+        <FloatingField label={t('السعر', 'Price')}>
+          <Input type="number" placeholder=" " className="pt-6" value={String(form.price)} onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value || 0) }))} />
+        </FloatingField>
+
+        <div className="space-y-2 rounded-2xl bg-surface2 p-3">
           <p className="text-sm text-muted">{t('الوسوم', 'Tags')}</p>
           <div className="flex flex-wrap gap-2">
             {TAGS.map((tag) => (
@@ -156,53 +185,69 @@ export default function Items({ notify }: { notify: (msg: string) => void }) {
           </div>
         </div>
 
-        <Input type="number" placeholder={t('ترتيب العرض', 'Sort order')} value={String(form.sort_order ?? 0)} onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value || 0) }))} />
-        <label className="flex min-h-11 items-center gap-2 text-sm text-muted">
+        <FloatingField label={t('ترتيب العرض', 'Sort order')}>
+          <Input type="number" placeholder=" " className="pt-6" value={String(form.sort_order ?? 0)} onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value || 0) }))} />
+        </FloatingField>
+
+        <label className="flex min-h-11 items-center gap-2 rounded-2xl bg-surface2 px-4 text-sm text-muted">
           <input type="checkbox" checked={Boolean(form.is_available)} onChange={(e) => setForm((f) => ({ ...f, is_available: e.target.checked }))} />
           {t('متاح', 'Available')}
         </label>
 
-        <div className="h-28 w-full overflow-hidden rounded-2xl border border-border bg-surface2">
-          {form.image_url ? <img src={form.image_url} alt={t('معاينة الصورة', 'Image preview')} className="h-full w-full object-cover" loading="lazy" decoding="async" /> : <div className="h-full w-full bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" />}
+        <div className="rounded-2xl bg-surface2 p-3">
+          <p className="mb-2 text-sm text-muted">{t('معاينة الصورة', 'Image preview')}</p>
+          <div className="h-32 w-full overflow-hidden rounded-2xl bg-surface">
+            {form.image_url ? <img src={form.image_url} alt={t('معاينة الصورة', 'Image preview')} className="h-full w-full object-cover" loading="lazy" decoding="async" /> : <div className="h-full w-full bg-gradient-to-br from-surface2 to-surface" aria-hidden="true" />}
+          </div>
         </div>
-        <input aria-label={t('رفع صورة', 'Upload image')} type="file" accept="image/*" onChange={(e) => void upload(e.target.files?.[0] ?? null)} />
+
+        <label className="rounded-2xl bg-surface2 p-3 text-sm text-muted">
+          <span>{t('رفع صورة', 'Upload image')}</span>
+          <input className="mt-2 block w-full" aria-label={t('رفع صورة', 'Upload image')} type="file" accept="image/*" onChange={(e) => void upload(e.target.files?.[0] ?? null)} />
+        </label>
         {uploading ? <p className="text-sm text-muted">{t('جارٍ رفع الصورة...', 'Uploading image...')}</p> : null}
 
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        {error ? <p className="rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p> : null}
         <Button className="w-full" onClick={() => void save()} disabled={saving || uploading}>{saving ? t('جارٍ الحفظ...', 'Saving...') : t('حفظ الصنف', 'Save item')}</Button>
       </Card>
 
-      <Card className="space-y-3 p-4">
-        <div className="grid grid-cols-1 gap-2">
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('بحث بالاسم...', 'Search by name...')} />
-          <select className="min-h-11 w-full rounded-2xl border border-border bg-surface px-4" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-            <option value="all">{t('كل الأقسام', 'All categories')}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>{language === 'ar' ? c.name_ar : c.name_en}</option>
-            ))}
-          </select>
+      <Card className="space-y-4 rounded-3xl bg-surface/95 p-5 shadow-elevate backdrop-blur-sm">
+        <div className="grid grid-cols-1 gap-3">
+          <FloatingField label={t('بحث بالاسم...', 'Search by name...')}>
+            <Input value={search} className="pt-6" placeholder=" " onChange={(e) => setSearch(e.target.value)} />
+          </FloatingField>
+
+          <label className="relative block">
+            <select className="min-h-14 w-full rounded-2xl border border-border/70 bg-surface px-4 pt-6" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+              <option value="all">{t('كل الأقسام', 'All categories')}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{language === 'ar' ? c.name_ar : c.name_en}</option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-muted">{t('فلترة القسم', 'Category filter')}</span>
+          </label>
         </div>
 
         {loading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
+          <div className="space-y-3">
+            <Skeleton className="h-24 w-full rounded-2xl" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
           </div>
         ) : filtered.length === 0 ? (
           <p className="text-sm text-muted">{t('لا توجد أصناف مطابقة.', 'No matching items.')}</p>
         ) : (
           filtered.map((row) => (
-            <div key={row.id ?? row.name_en} className="rounded-2xl border border-border bg-surface2 p-3">
+            <div key={row.id ?? row.name_en} className="rounded-2xl bg-surface2 p-4 shadow-soft">
               <div className="flex items-center gap-3">
-                {row.image_url ? <img src={row.image_url} alt="thumb" className="h-14 w-14 rounded-xl object-cover" loading="lazy" /> : <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-surface2 to-surface" />}
+                {row.image_url ? <img src={row.image_url} alt="thumb" className="h-16 w-16 rounded-2xl object-cover" loading="lazy" /> : <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-surface2 to-surface" />}
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">{language === 'ar' ? row.name_ar : row.name_en}</p>
                   <p className="text-sm text-muted">{row.price}</p>
                 </div>
                 <Chip active={Boolean(row.is_available)}>{row.is_available ? t('متاح', 'Available') : t('غير متاح', 'Unavailable')}</Chip>
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2">
                 <Button variant="secondary" onClick={() => setForm(row)}>{t('تعديل', 'Edit')}</Button>
                 <Button variant="secondary" onClick={() => setDeleteTarget(row)}>{t('حذف', 'Delete')}</Button>
               </div>

@@ -73,7 +73,7 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <Card className="space-y-2 p-4">
+      <Card className="space-y-2 rounded-3xl bg-surface/95 p-4 shadow-elevate">
         <div className="h-5 w-1/2 animate-pulse rounded bg-surface2" />
         <div className="h-11 w-full animate-pulse rounded-full bg-surface2" />
       </Card>
@@ -92,7 +92,7 @@ export default function Admin() {
   if (!authorized) {
     return (
       <>
-        <Card className="space-y-3 p-4 text-center">
+        <Card className="space-y-3 rounded-3xl bg-surface/95 p-4 text-center shadow-elevate">
           <h2 className="text-xl font-bold">{t('غير مصرح', 'Not authorized')}</h2>
           <p className="text-sm text-muted">{t('هذا الحساب ليس ضمن قائمة المدراء.', 'This account is not in the admins table.')}</p>
           <Button variant="secondary" className="w-full" onClick={() => void logout()}>
@@ -106,20 +106,32 @@ export default function Admin() {
 
   return (
     <>
-      <div className="space-y-3 pb-24">
-        {error ? (
-          <Card className="space-y-2 p-4">
-            <p className="text-sm text-red-600">{error}</p>
-            <Button variant="secondary" onClick={() => void refreshAuth()}>{t('إعادة المحاولة', 'Retry')}</Button>
+      <div className="grid grid-cols-1 gap-4 pb-24 lg:grid-cols-[220px_minmax(0,1fr)] lg:pb-6">
+        <aside className="hidden lg:block lg:sticky lg:top-6 lg:self-start">
+          <Card className="space-y-2 rounded-3xl bg-surface/95 p-3 shadow-elevate">
+            {nav.map((tab) => (
+              <Button key={tab.key} variant={section === tab.key ? 'primary' : 'secondary'} className="w-full justify-start" onClick={() => setSection(tab.key)}>
+                {tab.label}
+              </Button>
+            ))}
           </Card>
-        ) : null}
+        </aside>
 
-        {section === 'categories' ? <Categories notify={setToast} /> : null}
-        {section === 'items' ? <Items notify={setToast} /> : null}
-        {section === 'settings' ? <SettingsSection notify={setToast} /> : null}
+        <div className="space-y-4">
+          {error ? (
+            <Card className="space-y-2 rounded-3xl bg-surface/95 p-4 shadow-elevate">
+              <p className="text-sm text-red-600">{error}</p>
+              <Button variant="secondary" onClick={() => void refreshAuth()}>{t('إعادة المحاولة', 'Retry')}</Button>
+            </Card>
+          ) : null}
+
+          {section === 'categories' ? <Categories notify={setToast} /> : null}
+          {section === 'items' ? <Items notify={setToast} /> : null}
+          {section === 'settings' ? <SettingsSection notify={setToast} /> : null}
+        </div>
       </div>
 
-      <nav className="fixed inset-x-4 bottom-4 z-40 rounded-2xl border border-border bg-surface p-2 shadow-elevate">
+      <nav className="fixed inset-x-4 z-40 rounded-3xl bg-[rgba(255,255,255,0.92)] p-2 shadow-elevate backdrop-blur-sm lg:hidden" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         <div className="grid grid-cols-4 gap-2">
           {nav.map((tab) => (
             <Button key={tab.key} variant={section === tab.key ? 'primary' : 'secondary'} onClick={() => setSection(tab.key)}>

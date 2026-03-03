@@ -19,7 +19,25 @@ body {
   margin: 0;
   color: var(--text);
   background-color: var(--bg);
-  font-family: var(--font-family, system-ui, -apple-system, Segoe UI, sans-serif);
+  font-family: var(--font-family, Inter, system-ui, -apple-system, Segoe UI, sans-serif);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+p {
+  margin: 0;
 }
 
 body::before {
@@ -27,9 +45,11 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: var(--grain-opacity);
-  background-image: radial-gradient(circle at 1px 1px, rgba(110, 85, 65, 0.22) 1px, transparent 0);
-  background-size: 18px 18px;
+  opacity: 1;
+  background:
+    radial-gradient(120% 80% at 10% 0%, rgba(232, 221, 209, 0.42), transparent 60%),
+    radial-gradient(120% 80% at 90% 100%, rgba(139, 107, 79, 0.05), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(246, 242, 237, 0.22));
 }
 
 button,
@@ -46,4 +66,15 @@ select {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  outline-offset: 2px;
+}
+
+@supports not (color: color-mix(in srgb, red, white)) {
+  :focus-visible {
+    outline: 2px solid rgba(139, 107, 79, 0.35);
+  }
 }
