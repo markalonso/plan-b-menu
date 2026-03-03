@@ -58,6 +58,10 @@ export default function MenuCard({
             </div>
           </div>
         </div>
+
+        <span className="absolute bottom-3 end-3 inline-flex items-center rounded-full bg-accent px-3 py-1 text-sm font-semibold text-accentText shadow-soft">
+          {priceText}
+        </span>
       </Card>
     </button>
   );
