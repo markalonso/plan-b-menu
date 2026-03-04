@@ -19,13 +19,13 @@ export default function MenuCard({
 
   return (
     <button
-      className="group block min-h-11 w-full text-start transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
+      className="group block min-h-11 w-full text-start transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2"
       onClick={onClick}
       aria-label={name}
     >
-      <article className="relative overflow-hidden rounded-[26px] bg-surface shadow-soft transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:shadow-elevate group-active:scale-[0.98]">
+      <article className="relative overflow-hidden rounded-[26px] border border-cardBorder bg-cardBg shadow-soft transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:shadow-elevate group-active:scale-[0.98]">
         {/* Image */}
-        <div className="relative overflow-hidden bg-surface2" style={{ aspectRatio: '4/3' }}>
+        <div className="relative overflow-hidden bg-surface2" style={{ aspectRatio: '16/10' }}>
           {item.image_url && !imageFailed ? (
             <img
               src={item.image_url}
@@ -45,13 +45,13 @@ export default function MenuCard({
           )}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
           {/* Price badge */}
-          <span className="absolute bottom-3 end-3 inline-flex items-center rounded-full bg-accent/90 px-3 py-1 text-sm font-semibold text-accentText shadow-elevate backdrop-blur-sm">
+          <span className="absolute bottom-3 end-3 inline-flex items-center rounded-full border border-priceBadgeBorder bg-priceBadgeBg px-3 py-1 text-sm font-semibold text-priceBadgeText shadow-soft backdrop-blur-sm">
             {priceText}
           </span>
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-3.5 md:p-4">
           <h3 className="font-heading text-lg leading-snug text-text">{name}</h3>
           <p
             className="mt-1.5 text-sm leading-relaxed text-muted"

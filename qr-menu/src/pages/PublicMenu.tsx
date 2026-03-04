@@ -141,12 +141,12 @@ export default function PublicMenu() {
               onFocus={() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('ابحث في القائمة', 'Search menu…')}
-              className="h-11 rounded-xl border-border/50 bg-surface ps-10 pe-10 shadow-soft focus:border-accent/30"
+              className="h-11 rounded-xl border-inputBorder bg-inputBg ps-10 pe-10 shadow-soft hover:border-inputBorderHover focus:border-inputBorderFocus"
               aria-label={t('بحث', 'Search')}
             />
             {query ? (
               <button
-                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition hover:bg-surface2"
+                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition hover:bg-interactiveSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)]"
                 onClick={() => setQuery('')}
                 aria-label={t('مسح البحث', 'Clear search')}
               >
@@ -159,7 +159,7 @@ export default function PublicMenu() {
         {/* Category tabs */}
         <div className="sticky top-[132px] z-20 mt-3 mb-5 md:top-[144px]">
           {loading ? (
-            <div className="flex gap-1.5 rounded-2xl bg-surface/80 p-1.5 shadow-soft">
+            <div className="flex gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft">
               <Skeleton className="h-10 w-16 rounded-full" />
               <Skeleton className="h-10 w-20 rounded-full" />
               <Skeleton className="h-10 w-20 rounded-full" />
@@ -241,7 +241,7 @@ export default function PublicMenu() {
           which breaks position:fixed on children. */}
       <button
         onClick={() => setBillOpen(true)}
-        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-accent px-5 py-2.5 font-semibold text-accentText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:brightness-95 active:scale-[0.97]"
+        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-primary px-5 py-2.5 font-semibold text-primaryText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-primaryHover active:scale-[0.97] active:bg-primaryActive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2"
         style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
         aria-label={t('فتح الحساب', 'Open bill')}
       >
