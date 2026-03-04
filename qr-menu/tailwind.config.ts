@@ -12,7 +12,21 @@ export default {
         muted: 'var(--muted)',
         border: 'var(--border)',
         accent: 'var(--accent)',
-        accentText: 'var(--accentText)'
+        accentText: 'var(--accentText)',
+        primary: 'var(--primary)',
+        primaryHover: 'var(--primary-hover)',
+        primaryActive: 'var(--primary-active)',
+        primaryText: 'var(--primary-text)',
+        primaryDisabled: 'var(--primary-disabled)',
+        primaryTextDisabled: 'var(--primary-text-disabled)',
+        interactiveSoft: 'var(--interactive-soft)',
+        interactiveSoftHover: 'var(--interactive-soft-hover)',
+        interactiveSoftActive: 'var(--interactive-soft-active)',
+        tabbar: 'var(--tabbar-bg)',
+        inputBg: 'var(--input-bg)',
+        inputBorder: 'var(--input-border)',
+        inputBorderHover: 'var(--input-border-hover)',
+        inputBorderFocus: 'var(--input-border-focus)'
       },
       boxShadow: {
         soft: 'var(--shadow-sm)',
