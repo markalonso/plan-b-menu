@@ -117,41 +117,52 @@ export default function PublicMenu() {
 
   return (
     <main className="pb-28 [content-visibility:auto]">
-      <div className="rounded-[30px] bg-[rgba(255,255,255,0.58)] p-3 shadow-soft backdrop-blur-sm md:p-5">
-        <header className="sticky top-0 z-30 rounded-3xl border border-border/40 bg-[rgba(246,242,237,0.9)] px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
+      <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-5">
+        {/* Sticky header */}
+        <header className="sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted">Plan B Menu</p>
-              {loading ? <Skeleton className="mt-1 h-8 w-44" /> : <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>}
+              <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted/70">Plan B Menu</p>
+              {loading ? (
+                <Skeleton className="mt-1.5 h-8 w-48" />
+              ) : (
+                <h1 className="mt-0.5 font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
+              )}
             </div>
             <LanguageToggle />
           </div>
 
+          {/* Search */}
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 start-4 inline-flex items-center text-muted">⌕</span>
+            <span className="pointer-events-none absolute inset-y-0 start-4 inline-flex items-center text-muted/60 text-base" aria-hidden="true">⌕</span>
             <Input
               ref={searchRef}
               value={query}
               onFocus={() => searchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('ابحث في القائمة', 'Search menu')}
-              className="h-12 rounded-2xl border-0 bg-white/95 ps-10 pe-10 shadow-soft"
+              placeholder={t('ابحث في القائمة', 'Search menu…')}
+              className="h-11 rounded-xl border-border/50 bg-surface ps-10 pe-10 shadow-soft focus:border-accent/30"
               aria-label={t('بحث', 'Search')}
             />
             {query ? (
-              <button className="absolute inset-y-0 end-3 min-h-11 min-w-11 rounded-full px-2 text-muted transition hover:bg-surface2" onClick={() => setQuery('')} aria-label={t('مسح البحث', 'Clear search')}>
+              <button
+                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition hover:bg-surface2"
+                onClick={() => setQuery('')}
+                aria-label={t('مسح البحث', 'Clear search')}
+              >
                 ✕
               </button>
             ) : null}
           </div>
         </header>
 
-        <div className="sticky top-[134px] z-20 mt-3 mb-4 md:top-[146px]">
+        {/* Category tabs */}
+        <div className="sticky top-[132px] z-20 mt-3 mb-5 md:top-[144px]">
           {loading ? (
-            <div className="flex gap-2 rounded-2xl bg-white/70 p-2 shadow-soft">
-              <Skeleton className="h-11 w-20 rounded-full" />
-              <Skeleton className="h-11 w-24 rounded-full" />
-              <Skeleton className="h-11 w-24 rounded-full" />
+            <div className="flex gap-1.5 rounded-2xl bg-surface/80 p-1.5 shadow-soft">
+              <Skeleton className="h-10 w-16 rounded-full" />
+              <Skeleton className="h-10 w-20 rounded-full" />
+              <Skeleton className="h-10 w-20 rounded-full" />
             </div>
           ) : (
             <CategoryTabs
@@ -165,24 +176,24 @@ export default function PublicMenu() {
           )}
         </div>
 
+        {/* Content */}
         {error ? (
           <Card className="space-y-3 p-5 text-center">
             <p className="text-sm text-muted">{error}</p>
             <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
           </Card>
         ) : loading ? (
-          <section className="space-y-3 md:space-y-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="flex items-center gap-3 p-3">
-                <Skeleton className="h-24 w-24 shrink-0 rounded-2xl" />
-                <div className="w-full space-y-2">
-                  <Skeleton className="h-5 w-2/3" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-1/3" />
+              <div key={i} className="overflow-hidden rounded-[26px] bg-surface shadow-soft">
+                <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                <div className="space-y-2 p-4">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
                 </div>
-              </Card>
+              </div>
             ))}
-          </section>
+          </div>
         ) : categories.length === 0 ? (
           <Card className="p-6 text-center">
             <p className="text-sm text-muted">{t('لا توجد فئات بعد. يمكن للمشرف إضافتها.', 'No categories yet. Admin can add categories.')}</p>
@@ -192,7 +203,7 @@ export default function PublicMenu() {
             <p className="text-sm text-muted">{debouncedQuery ? t('لا توجد نتائج مطابقة.', 'No matching items.') : t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
           </Card>
         ) : (
-          <section className="space-y-3 md:space-y-4">
+          <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
             {visibleItems.map((item) => {
               const name = language === 'ar' ? item.name_ar : item.name_en;
               const description = (language === 'ar' ? item.desc_ar : item.desc_en) || t('وصف مختصر للطبق.', 'A short dish description.');
@@ -222,14 +233,15 @@ export default function PublicMenu() {
           formatPrice={formatPrice}
         />
 
+        {/* Bill FAB */}
         <button
           onClick={() => setBillOpen(true)}
-          className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accentText shadow-elevate transition-all duration-calm ease-calm"
-          style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+          className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-accent px-5 py-2.5 font-semibold text-accentText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:brightness-95 active:scale-[0.97]"
+          style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
           aria-label={t('فتح الحساب', 'Open bill')}
         >
           <span>{t('الحساب', 'Bill')}</span>
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/20 px-2 text-sm">{billItemCount}</span>
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/25 px-2 text-sm font-bold">{billItemCount}</span>
         </button>
 
         <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />

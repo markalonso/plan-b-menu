@@ -12,7 +12,7 @@ export default function CategoryTabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div className="no-scrollbar flex gap-2 overflow-x-auto rounded-2xl bg-[rgba(255,255,255,0.66)] p-2 shadow-soft">
+    <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-2xl bg-surface/80 p-1.5 shadow-soft backdrop-blur-sm">
       {tabs.map((tab) => (
         <Chip key={tab.id} active={active === tab.id} onClick={() => onChange(tab.id)} aria-label={tab.label} className="shrink-0">
           {tab.label}

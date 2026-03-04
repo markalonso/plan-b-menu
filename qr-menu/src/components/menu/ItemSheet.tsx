@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import BottomSheet from '../BottomSheet';
 import Button from '../Button';
-import Chip from '../Chip';
 import type { MenuItem } from '../../lib/api/menu';
 
 export default function ItemSheet({
@@ -36,8 +35,9 @@ export default function ItemSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title={name}>
       {item ? (
-        <div className="space-y-5 pb-1">
-          <div className="relative overflow-hidden rounded-[26px] bg-surface2">
+        <div className="space-y-4 pb-2">
+          {/* Hero image */}
+          <div className="relative overflow-hidden rounded-2xl bg-surface2" style={{ aspectRatio: '16/9' }}>
             {item.image_url && !imageFailed ? (
               <img
                 src={item.image_url}
@@ -50,30 +50,41 @@ export default function ItemSheet({
                   setImageFailed(true);
                 }}
                 onLoadStart={() => setImageLoading(true)}
-                className="h-[240px] w-full object-cover md:h-[320px]"
+                className="h-full w-full object-cover"
               />
             ) : null}
-            {imageLoading || !item.image_url || imageFailed ? <div className="h-[240px] w-full animate-pulse bg-gradient-to-br from-surface2 to-surface md:h-[320px]" aria-hidden="true" /> : null}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent" />
+            {(imageLoading || !item.image_url || imageFailed) && (
+              <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-surface2 via-surface to-surface2" aria-hidden="true" />
+            )}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/25 to-transparent" />
           </div>
 
-          <div className="rounded-3xl bg-surface2 p-4 md:p-5">
-            <p className="text-sm leading-7 text-muted md:text-base">{desc || t('لا يوجد وصف إضافي لهذا الصنف.', 'No extra description for this item.')}</p>
-            {item.tags?.length ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {item.tags.map((tag) => (
-                  <Chip key={tag}>{tag}</Chip>
-                ))}
-              </div>
-            ) : null}
+          {/* Description */}
+          {(desc || (item.tags?.length ?? 0) > 0) && (
+            <div className="rounded-2xl bg-surface2 px-4 py-4">
+              {desc ? (
+                <p className="text-sm leading-relaxed text-muted">{desc}</p>
+              ) : null}
+              {item.tags?.length ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {item.tags.map((tag) => (
+                    <span key={tag} className="inline-flex items-center rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted shadow-soft">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          )}
+
+          {/* Price row */}
+          <div className="flex items-center justify-between rounded-2xl bg-[color:var(--accentSoft)] px-4 py-3">
+            <p className="text-sm font-medium uppercase tracking-[0.12em] text-muted">{t('السعر', 'Price')}</p>
+            <p className="font-heading text-2xl font-bold text-accent">{formatPrice(item.price, currency, language)}</p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-[color:var(--accentSoft)] px-4 py-3">
-            <p className="text-sm uppercase tracking-[0.18em] text-muted">{t('السعر', 'Price')}</p>
-            <p className="text-xl font-bold text-accent md:text-2xl">{formatPrice(item.price, currency, language)}</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          {/* Actions */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Button onClick={() => onAdd(item)}>{t('أضف للحساب', 'Add to bill')}</Button>
             <Button variant="secondary" onClick={onClose}>
               {t('إغلاق', 'Close')}
