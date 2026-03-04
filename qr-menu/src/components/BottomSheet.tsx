@@ -20,6 +20,15 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
   if (typeof document === 'undefined') return null;
 
   return createPortal(
@@ -28,10 +37,12 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
       aria-hidden={!open}
     >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+      <button
+        type="button"
+        className="absolute inset-0 w-full bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-hidden="true"
+        aria-label="Close sheet"
+        tabIndex={-1}
       />
 
       {/* Sheet panel */}
