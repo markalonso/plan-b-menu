@@ -26,7 +26,12 @@ export default {
         inputBg: 'var(--input-bg)',
         inputBorder: 'var(--input-border)',
         inputBorderHover: 'var(--input-border-hover)',
-        inputBorderFocus: 'var(--input-border-focus)'
+        inputBorderFocus: 'var(--input-border-focus)',
+        cardBg: 'var(--card-bg)',
+        cardBorder: 'var(--card-border)',
+        priceBadgeBg: 'var(--price-badge-bg)',
+        priceBadgeBorder: 'var(--price-badge-border)',
+        priceBadgeText: 'var(--price-badge-text)'
       },
       boxShadow: {
         soft: 'var(--shadow-sm)',

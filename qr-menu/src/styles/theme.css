@@ -27,6 +27,13 @@
   --input-border-hover: #b8cbd0;
   --input-border-focus: #0b5d6b;
 
+  --card-bg: #fffdfb;
+  --card-border: #dfd7cd;
+
+  --price-badge-bg: rgba(255, 255, 255, 0.94);
+  --price-badge-border: #d0e1e5;
+  --price-badge-text: #0b5d6b;
+
   --r-xl: 1rem;
   --r-2xl: 18px;
   --r-3xl: 28px;
