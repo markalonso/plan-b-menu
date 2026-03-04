@@ -183,7 +183,7 @@ export default function PublicMenu() {
             <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
           </Card>
         ) : loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="overflow-hidden rounded-[26px] bg-surface shadow-soft">
                 <Skeleton className="aspect-[4/3] w-full rounded-none" />
@@ -203,7 +203,7 @@ export default function PublicMenu() {
             <p className="text-sm text-muted">{debouncedQuery ? t('لا توجد نتائج مطابقة.', 'No matching items.') : t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
           </Card>
         ) : (
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
             {visibleItems.map((item) => {
               const name = language === 'ar' ? item.name_ar : item.name_en;
               const description = (language === 'ar' ? item.desc_ar : item.desc_en) || t('وصف مختصر للطبق.', 'A short dish description.');
@@ -233,19 +233,21 @@ export default function PublicMenu() {
           formatPrice={formatPrice}
         />
 
-        {/* Bill FAB */}
-        <button
-          onClick={() => setBillOpen(true)}
-          className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-accent px-5 py-2.5 font-semibold text-accentText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:brightness-95 active:scale-[0.97]"
-          style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
-          aria-label={t('فتح الحساب', 'Open bill')}
-        >
-          <span>{t('الحساب', 'Bill')}</span>
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/25 px-2 text-sm font-bold">{billItemCount}</span>
-        </button>
-
         <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />
       </div>
+
+      {/* Bill FAB — must live OUTSIDE any backdrop-filter ancestor.
+          WebKit/iOS treats backdrop-filter as a containing block,
+          which breaks position:fixed on children. */}
+      <button
+        onClick={() => setBillOpen(true)}
+        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-accent px-5 py-2.5 font-semibold text-accentText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:brightness-95 active:scale-[0.97]"
+        style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+        aria-label={t('فتح الحساب', 'Open bill')}
+      >
+        <span>{t('الحساب', 'Bill')}</span>
+        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/25 px-2 text-sm font-bold">{billItemCount}</span>
+      </button>
     </main>
   );
 }

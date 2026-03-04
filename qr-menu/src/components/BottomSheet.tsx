@@ -60,10 +60,10 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
         }}
       >
         {/* Handle + close */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-3">
+        <div className="relative flex items-center justify-center pt-3 pb-2">
           <div className="h-1 w-10 rounded-full bg-border" aria-hidden="true" />
           <button
-            className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition-all duration-200 hover:bg-surface2 hover:text-text"
+            className="absolute end-4 inline-flex h-8 w-8 items-center justify-center rounded-full text-sm text-muted transition-all duration-200 hover:bg-surface2 hover:text-text"
             onClick={onClose}
             aria-label="Close sheet"
           >
