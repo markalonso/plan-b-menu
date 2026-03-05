@@ -19,7 +19,8 @@ export default function BillSheet({
   language,
   t,
   currency,
-  formatPrice
+  formatPrice,
+  vatNote
 }: {
   open: boolean;
   onClose: () => void;
@@ -27,6 +28,7 @@ export default function BillSheet({
   t: (ar: string, en: string) => string;
   currency: string;
   formatPrice: (price: number, currency: string, language: 'ar' | 'en') => string;
+  vatNote?: string;
 }) {
   const state = useBillStore();
   const [activePerson, setActivePerson] = useState('1');
@@ -132,6 +134,7 @@ export default function BillSheet({
               <span className="text-muted">{t('قيمة الضريبة', 'Tax amount')}</span>
               <span className="font-medium">{formatPrice(taxAmount, currency, language)}</span>
             </p>
+            {vatNote ? <p className="text-xs text-muted">{vatNote}</p> : null}
           </div>
         </section>
 

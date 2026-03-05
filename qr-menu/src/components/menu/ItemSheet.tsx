@@ -11,7 +11,7 @@ export default function ItemSheet({
   language,
   t,
   currency,
-  formatPrice
+  getMenuPriceText
 }: {
   open: boolean;
   item: MenuItem | null;
@@ -20,7 +20,7 @@ export default function ItemSheet({
   language: 'ar' | 'en';
   t: (ar: string, en: string) => string;
   currency: string;
-  formatPrice: (price: number, currency: string, language: 'ar' | 'en') => string;
+  getMenuPriceText: (item: MenuItem, currency: string, language: 'ar' | 'en') => string;
 }) {
   const [imageLoading, setImageLoading] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -80,7 +80,7 @@ export default function ItemSheet({
           {/* Price row */}
           <div className="flex items-center justify-between rounded-2xl bg-[color:var(--accentSoft)] px-4 py-3">
             <p className="text-sm font-medium uppercase tracking-[0.12em] text-muted">{t('السعر', 'Price')}</p>
-            <p className="font-heading text-2xl font-bold text-accent">{formatPrice(item.price, currency, language)}</p>
+            <p className="font-heading text-2xl font-bold text-accent">{getMenuPriceText(item, currency, language)}</p>
           </div>
 
           {/* Actions */}

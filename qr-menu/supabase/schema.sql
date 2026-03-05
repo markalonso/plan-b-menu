@@ -23,6 +23,7 @@ create table if not exists public.items (
   desc_ar text default '',
   desc_en text default '',
   price numeric not null,
+  price_text text default null,
   image_url text default '',
   tags jsonb default '[]'::jsonb,
   sort_order int default 0,
@@ -35,6 +36,11 @@ create table if not exists public.settings (
   restaurant_name_ar text default 'Plan B',
   restaurant_name_en text default 'Plan B',
   currency text default 'EGP',
+  tax_percent numeric default 14,
+  vat_note_ar text default 'ضريبة %14 يضاف',
+  vat_note_en text default 'All Prices are subjected to 14% VAT Tax',
+  mains_note_ar text default '',
+  mains_note_en text default '',
   constraint settings_single_row check (id = 1)
 );
 

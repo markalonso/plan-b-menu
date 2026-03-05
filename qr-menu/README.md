@@ -70,3 +70,21 @@ cd qr-menu
 npm install
 npm run dev
 ```
+
+## One-time full menu seed
+
+1. Ensure your database is up-to-date with `supabase/schema.sql` (it includes `items.price_text` and settings VAT fields used by the seed).
+2. Export your Supabase credentials in a terminal (service role key only, never in client code):
+
+```bash
+export SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
+```
+
+3. Run the idempotent full-menu import:
+
+```bash
+npm run seed:fullmenu
+```
+
+The seed upserts categories by `slug`, upserts items by `(category_id, name_ar, name_en)` identity, sets sort orders, and sets default VAT values in `settings`.
