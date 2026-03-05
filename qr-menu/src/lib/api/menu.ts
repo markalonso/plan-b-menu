@@ -5,6 +5,11 @@ export type Settings = {
   restaurant_name_ar: string;
   restaurant_name_en: string;
   currency: string;
+  tax_percent?: number;
+  vat_note_ar?: string;
+  vat_note_en?: string;
+  mains_note_ar?: string;
+  mains_note_en?: string;
 };
 
 export type Category = {
@@ -24,6 +29,7 @@ export type MenuItem = {
   desc_ar?: string;
   desc_en?: string;
   price: number;
+  price_text?: string | null;
   image_url?: string;
   tags?: string[];
   sort_order?: number;

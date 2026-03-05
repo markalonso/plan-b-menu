@@ -27,6 +27,15 @@ function formatPrice(price: number, currency: string, language: 'ar' | 'en') {
   }).format(price);
 }
 
+
+function getMenuPriceText(item: MenuItem, currency: string, language: 'ar' | 'en') {
+  if (item.price_text && item.price_text.trim()) {
+    return `${item.price_text} ${currency}`;
+  }
+
+  return formatPrice(item.price, currency, language);
+}
+
 export default function PublicMenu() {
   const { language, t } = useLanguage();
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -69,6 +78,10 @@ export default function PublicMenu() {
       };
 
       setSettings(settingsData);
+      if (settingsData?.tax_percent !== undefined) {
+        billActions.setTaxEnabled(true);
+        billActions.setTaxPercent(Number(settingsData.tax_percent));
+      }
       setCategories(orderedCategories);
       setItems(orderedItems);
     } catch {
@@ -101,6 +114,7 @@ export default function PublicMenu() {
 
   const restaurantName = settings ? (language === 'ar' ? settings.restaurant_name_ar : settings.restaurant_name_en) : t('بلان بي', 'Plan B');
   const currency = settings?.currency ?? 'EGP';
+  const vatNote = language === 'ar' ? settings?.vat_note_ar : settings?.vat_note_en;
 
   function addToBill(item: MenuItem) {
     const fallbackId = `${item.name_en}-${item.price}`;
@@ -214,7 +228,7 @@ export default function PublicMenu() {
                   item={item}
                   name={name}
                   description={description}
-                  priceText={formatPrice(item.price, currency, language)}
+                  priceText={getMenuPriceText(item, currency, language)}
                   onClick={() => setSelectedItem(item)}
                 />
               );
@@ -230,10 +244,10 @@ export default function PublicMenu() {
           language={language}
           t={t}
           currency={currency}
-          formatPrice={formatPrice}
+          getMenuPriceText={getMenuPriceText}
         />
 
-        <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} />
+        <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} vatNote={vatNote} />
       </div>
 
       {/* Bill FAB — must live OUTSIDE any backdrop-filter ancestor.
