@@ -151,11 +151,12 @@ export function useBillStore() {
 }
 
 export const billActions = {
-  addItem(item: Omit<BillItem, 'qty'>) {
+  addItem(item: Omit<BillItem, 'qty'>, quantity = 1) {
+    const normalizedQuantity = clampNumber(Math.floor(quantity), 1);
     const existing = state.items.find((entry) => entry.id === item.id);
     const items = existing
-      ? state.items.map((entry) => (entry.id === item.id ? { ...entry, qty: entry.qty + 1 } : entry))
-      : [...state.items, { ...item, qty: 1 }];
+      ? state.items.map((entry) => (entry.id === item.id ? { ...entry, qty: entry.qty + normalizedQuantity } : entry))
+      : [...state.items, { ...item, qty: normalizedQuantity }];
 
     emit({ ...state, items });
   },

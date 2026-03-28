@@ -15,7 +15,7 @@ import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
 
 const ALL_KEY = '__all__';
-const MAX_VISIBLE_CATEGORY_CHIPS = 9;
+const MAX_VISIBLE_CATEGORY_CHIPS = 7;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
@@ -114,14 +114,14 @@ export default function PublicMenu() {
   const currency = settings?.currency ?? 'EGP';
   const vatNote = language === 'ar' ? settings?.vat_note_ar : settings?.vat_note_en;
 
-  function addToBill(item: MenuItem) {
+  function addToBill(item: MenuItem, quantity: number) {
     const fallbackId = `${item.name_en}-${item.price}`;
     billActions.addItem({
       id: item.id ?? fallbackId,
       name_ar: item.name_ar,
       name_en: item.name_en,
       price: item.price
-    });
+    }, quantity);
     setSelectedItem(null);
   }
 
@@ -171,7 +171,7 @@ export default function PublicMenu() {
         {/* Category tabs */}
         <div className="mt-3 mb-5">
           {loading ? (
-            <div className="flex gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft">
+            <div className="flex flex-wrap gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-2 shadow-soft">
               <Skeleton className="h-10 w-16 rounded-full" />
               <Skeleton className="h-10 w-20 rounded-full" />
               <Skeleton className="h-10 w-20 rounded-full" />
@@ -180,7 +180,7 @@ export default function PublicMenu() {
             <CategoryTabs
               tabs={tabs}
               active={selectedCategory}
-              maxVisibleTabs={MAX_VISIBLE_CATEGORY_CHIPS + 1}
+              maxVisibleTabs={MAX_VISIBLE_CATEGORY_CHIPS}
               moreLabel={t('المزيد', 'More')}
               allCategoriesTitle={t('كل الفئات', 'All categories')}
               onChange={(id) => {
