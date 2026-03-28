@@ -15,7 +15,7 @@ import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
 
 const ALL_KEY = '__all__';
-const MAX_VISIBLE_CATEGORY_CHIPS = 7;
+const MAX_VISIBLE_CATEGORY_CHIPS = 14;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
