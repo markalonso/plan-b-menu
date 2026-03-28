@@ -15,6 +15,7 @@ import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
 
 const ALL_KEY = '__all__';
+const MAX_VISIBLE_CATEGORY_CHIPS = 9;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
@@ -168,7 +169,7 @@ export default function PublicMenu() {
         </header>
 
         {/* Category tabs */}
-        <div className="sticky top-[132px] z-20 mt-3 mb-5 md:top-[144px]">
+        <div className="mt-3 mb-5">
           {loading ? (
             <div className="flex gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft">
               <Skeleton className="h-10 w-16 rounded-full" />
@@ -179,6 +180,7 @@ export default function PublicMenu() {
             <CategoryTabs
               tabs={tabs}
               active={selectedCategory}
+              maxVisibleTabs={MAX_VISIBLE_CATEGORY_CHIPS + 1}
               moreLabel={t('المزيد', 'More')}
               allCategoriesTitle={t('كل الفئات', 'All categories')}
               onChange={(id) => {
