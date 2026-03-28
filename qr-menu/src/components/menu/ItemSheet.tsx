@@ -16,7 +16,7 @@ export default function ItemSheet({
   open: boolean;
   item: MenuItem | null;
   onClose: () => void;
-  onAdd: (item: MenuItem) => void;
+  onAdd: (item: MenuItem, quantity: number) => void;
   language: 'ar' | 'en';
   t: (ar: string, en: string) => string;
   currency: string;
@@ -24,6 +24,7 @@ export default function ItemSheet({
 }) {
   const [imageLoading, setImageLoading] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const name = item ? (language === 'ar' ? item.name_ar : item.name_en) : '';
   const desc = item ? (language === 'ar' ? item.desc_ar ?? '' : item.desc_en ?? '') : '';
   const trimmedDesc = desc.trim();
@@ -33,8 +34,30 @@ export default function ItemSheet({
     setImageLoading(Boolean(item?.image_url));
   }, [item?.id, item?.image_url]);
 
+  useEffect(() => {
+    if (open) setQuantity(1);
+  }, [open, item?.id]);
+
+  function decrementQty() {
+    setQuantity((prev) => Math.max(1, prev - 1));
+  }
+
+  function incrementQty() {
+    setQuantity((prev) => prev + 1);
+  }
+
+  function handleAdd(targetItem: MenuItem) {
+    onAdd(targetItem, quantity);
+    setQuantity(1);
+  }
+
+  function handleClose() {
+    setQuantity(1);
+    onClose();
+  }
+
   return (
-    <BottomSheet open={open} onClose={onClose} title={name}>
+    <BottomSheet open={open} onClose={handleClose} title={name}>
       {item ? (
         <div className="space-y-4 pb-2">
           {/* Hero image */}
@@ -85,9 +108,35 @@ export default function ItemSheet({
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <Button onClick={() => onAdd(item)}>{t('أضف للحساب', 'Add to bill')}</Button>
-            <Button variant="secondary" onClick={onClose}>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 rounded-2xl bg-surface2 p-2">
+              <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface px-2 py-1 shadow-soft">
+                <span className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('الكمية', 'Qty')}</span>
+                <button
+                  type="button"
+                  onClick={decrementQty}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold text-text transition hover:bg-interactiveSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)]"
+                  aria-label={t('تقليل الكمية', 'Decrease quantity')}
+                >
+                  −
+                </button>
+                <span className="min-w-8 text-center text-sm font-semibold tabular-nums text-text" aria-live="polite" aria-atomic="true">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={incrementQty}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold text-text transition hover:bg-interactiveSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)]"
+                  aria-label={t('زيادة الكمية', 'Increase quantity')}
+                >
+                  +
+                </button>
+              </div>
+              <Button className="flex-1" onClick={() => handleAdd(item)}>
+                {t('أضف للحساب', 'Add to bill')}
+              </Button>
+            </div>
+            <Button variant="secondary" onClick={handleClose} className="w-full">
               {t('إغلاق', 'Close')}
             </Button>
           </div>
