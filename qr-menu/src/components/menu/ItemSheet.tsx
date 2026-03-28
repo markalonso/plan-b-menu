@@ -26,6 +26,7 @@ export default function ItemSheet({
   const [imageFailed, setImageFailed] = useState(false);
   const name = item ? (language === 'ar' ? item.name_ar : item.name_en) : '';
   const desc = item ? (language === 'ar' ? item.desc_ar ?? '' : item.desc_en ?? '') : '';
+  const trimmedDesc = desc.trim();
 
   useEffect(() => {
     setImageFailed(false);
@@ -60,10 +61,10 @@ export default function ItemSheet({
           </div>
 
           {/* Description */}
-          {(desc || (item.tags?.length ?? 0) > 0) && (
+          {(trimmedDesc || (item.tags?.length ?? 0) > 0) && (
             <div className="rounded-2xl bg-surface2 px-4 py-4">
-              {desc ? (
-                <p className="text-sm leading-relaxed text-muted">{desc}</p>
+              {trimmedDesc ? (
+                <p className="text-sm leading-relaxed text-muted">{trimmedDesc}</p>
               ) : null}
               {item.tags?.length ? (
                 <div className="mt-3 flex flex-wrap gap-2">

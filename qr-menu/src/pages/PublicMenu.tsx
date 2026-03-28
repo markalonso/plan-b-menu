@@ -5,6 +5,7 @@ import Input from '../components/Input';
 import LanguageToggle from '../components/LanguageToggle';
 import Skeleton from '../components/Skeleton';
 import BillSheet from '../components/bill/BillSheet';
+import BillPill from '../components/bill/BillPill';
 import CategoryTabs from '../components/menu/CategoryTabs';
 import ItemSheet from '../components/menu/ItemSheet';
 import MenuCard from '../components/menu/MenuCard';
@@ -78,10 +79,6 @@ export default function PublicMenu() {
       };
 
       setSettings(settingsData);
-      if (settingsData?.tax_percent !== undefined) {
-        billActions.setTaxEnabled(true);
-        billActions.setTaxPercent(Number(settingsData.tax_percent));
-      }
       setCategories(orderedCategories);
       setItems(orderedItems);
     } catch {
@@ -130,7 +127,7 @@ export default function PublicMenu() {
   const billItemCount = getItemCount(billState);
 
   return (
-    <main className="pb-28 [content-visibility:auto]">
+    <main className={billItemCount > 0 ? 'pb-28' : 'pb-6'}>
       <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-5">
         {/* Sticky header */}
         <header className="sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
@@ -182,6 +179,8 @@ export default function PublicMenu() {
             <CategoryTabs
               tabs={tabs}
               active={selectedCategory}
+              moreLabel={t('المزيد', 'More')}
+              allCategoriesTitle={t('كل الفئات', 'All categories')}
               onChange={(id) => {
                 setSelectedCategory(id);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -220,7 +219,8 @@ export default function PublicMenu() {
           <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
             {visibleItems.map((item) => {
               const name = language === 'ar' ? item.name_ar : item.name_en;
-              const description = (language === 'ar' ? item.desc_ar : item.desc_en) || t('وصف مختصر للطبق.', 'A short dish description.');
+              const rawDescription = language === 'ar' ? item.desc_ar : item.desc_en;
+              const description = rawDescription?.trim() ? rawDescription.trim() : undefined;
 
               return (
                 <MenuCard
@@ -250,18 +250,12 @@ export default function PublicMenu() {
         <BillSheet open={billOpen} onClose={() => setBillOpen(false)} language={language} t={t} currency={currency} formatPrice={formatPrice} vatNote={vatNote} />
       </div>
 
-      {/* Bill FAB — must live OUTSIDE any backdrop-filter ancestor.
-          WebKit/iOS treats backdrop-filter as a containing block,
-          which breaks position:fixed on children. */}
-      <button
-        onClick={() => setBillOpen(true)}
-        className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-2.5 rounded-full bg-primary px-5 py-2.5 font-semibold text-primaryText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-primaryHover active:scale-[0.97] active:bg-primaryActive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2"
-        style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
-        aria-label={t('فتح الحساب', 'Open bill')}
-      >
-        <span>{t('الحساب', 'Bill')}</span>
-        <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-white/25 px-2 text-sm font-bold">{billItemCount}</span>
-      </button>
+      <BillPill
+        count={billItemCount}
+        onOpen={() => setBillOpen(true)}
+        label={t('الحساب', 'Bill')}
+        ariaLabel={t('فتح الحساب', 'Open bill')}
+      />
     </main>
   );
 }
