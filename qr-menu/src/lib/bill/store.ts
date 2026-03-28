@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 const STORAGE_KEY = 'qr-menu-local-bill';
 const STORAGE_VERSION = 2;
+export const FIXED_VAT_PERCENT = 14;
 
 type StoredBill = {
   version: number;
@@ -27,7 +28,6 @@ export type SmartSplitPerson = {
 export type BillState = {
   items: BillItem[];
   taxEnabled: boolean;
-  taxPercent: number;
   discountEnabled: boolean;
   discountType: DiscountType;
   discountValue: number;
@@ -39,7 +39,6 @@ export type BillState = {
 const defaultState: BillState = {
   items: [],
   taxEnabled: false,
-  taxPercent: 0,
   discountEnabled: false,
   discountType: 'percent',
   discountValue: 0,
@@ -97,7 +96,6 @@ function normalizeSmartSplit(state: BillState): BillState {
 
   return {
     ...state,
-    taxPercent: clampNumber(state.taxPercent, 0, 100),
     discountValue: clampNumber(state.discountValue),
     peopleCount,
     smartSplit: nextSmartSplit,
@@ -174,9 +172,6 @@ export const billActions = {
   setTaxEnabled(enabled: boolean) {
     emit({ ...state, taxEnabled: enabled });
   },
-  setTaxPercent(value: number) {
-    emit({ ...state, taxPercent: clampNumber(value, 0, 100) });
-  },
   setDiscountEnabled(enabled: boolean) {
     emit({ ...state, discountEnabled: enabled });
   },
@@ -230,7 +225,7 @@ export function getSubtotal(billState: BillState) {
 
 export function getTaxAmount(billState: BillState, subtotal: number) {
   if (!billState.taxEnabled) return 0;
-  return (subtotal * clampNumber(billState.taxPercent, 0, 100)) / 100;
+  return (subtotal * FIXED_VAT_PERCENT) / 100;
 }
 
 export function getDiscountAmount(billState: BillState, subtotal: number) {

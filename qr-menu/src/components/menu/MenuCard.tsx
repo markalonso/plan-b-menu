@@ -10,7 +10,7 @@ export default function MenuCard({
 }: {
   item: MenuItem;
   name: string;
-  description: string;
+  description?: string;
   priceText: string;
   onClick: () => void;
 }) {
@@ -53,12 +53,14 @@ export default function MenuCard({
         {/* Content */}
         <div className="p-3.5 md:p-4">
           <h3 className="font-heading text-lg leading-snug text-text">{name}</h3>
-          <p
-            className="mt-1.5 text-sm leading-relaxed text-muted"
-            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-          >
-            {description}
-          </p>
+          {description ? (
+            <p
+              className="mt-1.5 text-sm leading-relaxed text-muted"
+              style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+            >
+              {description}
+            </p>
+          ) : null}
         </div>
       </article>
     </button>
