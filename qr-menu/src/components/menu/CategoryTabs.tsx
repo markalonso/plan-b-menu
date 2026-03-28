@@ -8,7 +8,7 @@ export default function CategoryTabs({
   tabs,
   active,
   onChange,
-  maxVisibleTabs = 4,
+  maxVisibleTabs = 9,
   moreLabel = 'More',
   allCategoriesTitle = 'All categories'
 }: {
@@ -28,29 +28,31 @@ export default function CategoryTabs({
 
   return (
     <>
-      <div className="flex gap-1.5 overflow-hidden rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft backdrop-blur-sm">
-        {visibleTabs.map((tab) => (
-          <Chip
-            key={tab.id}
-            active={active === tab.id}
-            onClick={() => onChange(tab.id)}
-            aria-label={tab.label}
-            className="min-w-0 flex-1 truncate whitespace-nowrap px-3"
-          >
-            {tab.label}
-          </Chip>
-        ))}
+      <div className="rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft backdrop-blur-sm">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+          {visibleTabs.map((tab) => (
+            <Chip
+              key={tab.id}
+              active={active === tab.id}
+              onClick={() => onChange(tab.id)}
+              aria-label={tab.label}
+              className="w-full min-w-0 justify-center truncate whitespace-nowrap px-3"
+            >
+              {tab.label}
+            </Chip>
+          ))}
 
-        {hasOverflow ? (
-          <Chip
-            active={isActiveHidden}
-            onClick={() => setIsMoreOpen(true)}
-            aria-label={moreLabel}
-            className="shrink-0 whitespace-nowrap px-3"
-          >
-            {moreLabel}
-          </Chip>
-        ) : null}
+          {hasOverflow ? (
+            <Chip
+              active={isActiveHidden}
+              onClick={() => setIsMoreOpen(true)}
+              aria-label={moreLabel}
+              className="w-full min-w-0 justify-center truncate whitespace-nowrap px-3"
+            >
+              {moreLabel}
+            </Chip>
+          ) : null}
+        </div>
       </div>
 
       <BottomSheet open={isMoreOpen} onClose={() => setIsMoreOpen(false)} title={allCategoriesTitle}>
