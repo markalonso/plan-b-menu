@@ -21,8 +21,26 @@ const LOAD_TIMEOUT_MS = 12_000;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
-function BrandMark({ className = '' }: { className?: string }) {
-  return <img src={planBMark} alt="" className={className} loading="eager" decoding="async" />;
+type BrandMarkProps = {
+  className?: string;
+  alt?: string;
+  loading?: 'eager' | 'lazy';
+  fetchPriority?: 'high' | 'low' | 'auto';
+};
+
+function BrandMark({ className = '', alt = '', loading = 'lazy', fetchPriority = 'auto' }: BrandMarkProps) {
+  return (
+    <img
+      src={planBMark}
+      alt={alt}
+      width={256}
+      height={256}
+      className={className}
+      loading={loading}
+      decoding="async"
+      fetchPriority={fetchPriority}
+    />
+  );
 }
 
 function isIOSWebKitBrowser() {
@@ -37,7 +55,7 @@ function MenuSplash({ restaurantName, isIOSWebKit }: { restaurantName: string; i
   return (
     <section className={`entry-shell entry-splash ${isIOSWebKit ? 'ios-webkit' : ''}`} aria-label={restaurantName}>
       <div className="entry-card">
-        <BrandMark className="mx-auto h-20 w-20 drop-shadow-[0_12px_25px_rgba(13,58,146,0.2)]" />
+        <BrandMark className="brand-logo brand-logo-splash mx-auto" alt="Plan B Menu logo" loading="eager" fetchPriority="high" />
         <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-text">{restaurantName}</h1>
       </div>
     </section>
@@ -48,7 +66,7 @@ function BrandedLoading({ restaurantName, loadingText, isIOSWebKit }: { restaura
   return (
     <section className={`entry-shell entry-loading ${isIOSWebKit ? 'ios-webkit' : ''}`} aria-live="polite" aria-busy="true">
       <div className="entry-card">
-        <BrandMark className="mx-auto h-16 w-16 opacity-95" />
+        <BrandMark className="brand-logo brand-logo-loading mx-auto" alt="Plan B Menu logo" loading="eager" fetchPriority="high" />
         <p className="mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-muted/70">Plan B Menu</p>
         <h2 className="mt-1 font-heading text-2xl font-semibold tracking-tight text-text">{restaurantName}</h2>
         <p className="mt-2 text-sm text-muted">{loadingText}</p>
@@ -247,20 +265,13 @@ export default function PublicMenu() {
       <div className={`menu-sticky-shell rounded-[30px] p-3 shadow-soft md:p-4 ${isIOSWebKit ? 'menu-sticky-shell-ios' : 'backdrop-blur-sm'}`}>
         {/* Sticky header */}
         <header className={`menu-sticky-header sticky top-0 z-30 rounded-2xl px-4 pb-3 pt-4 md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? 'menu-sticky-header-ios' : 'backdrop-blur-lg'}`}>
-          <div className="menu-hero mb-4 rounded-2xl border border-border/60 bg-bg/70 p-3">
-            <div className="flex items-center gap-2.5">
-              <BrandMark className="h-8 w-8 shrink-0" />
-              <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted/70">Plan B Menu</p>
-                <p className="text-sm leading-tight text-muted">{t('اختيارات اليوم بلمسة هادئة', 'Today’s picks, presented with calm')}</p>
-              </div>
-            </div>
-          </div>
-
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted/70">Plan B Menu</p>
-              <h1 className="mt-0.5 font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <BrandMark className="brand-logo brand-logo-header" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted/70">Plan B Menu</p>
+                <h1 className="mt-0.5 truncate font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
+              </div>
             </div>
             <LanguageToggle />
           </div>
