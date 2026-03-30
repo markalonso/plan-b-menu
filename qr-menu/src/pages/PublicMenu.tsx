@@ -10,7 +10,7 @@ import CategoryTabs from '../components/menu/CategoryTabs';
 import ItemSheet from '../components/menu/ItemSheet';
 import MenuCard from '../components/menu/MenuCard';
 import { getCategories, getItems, getSettings, type Category, type MenuItem, type Settings } from '../lib/api/menu';
-import { billActions, getItemCount, useBillStore } from '../lib/bill/store';
+import { billActions, getItemCount, getTotal, useBillStore } from '../lib/bill/store';
 import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
 
@@ -125,11 +125,20 @@ export default function PublicMenu() {
     setSelectedItem(null);
   }
 
+  function scrollToMenuTop() {
+    if (typeof window === 'undefined') return;
+    if (window.scrollY < 80) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
   const billItemCount = getItemCount(billState);
+  const billTotal = getTotal(billState);
+  const billSummary = formatPrice(billTotal, currency, language);
 
   return (
     <main className={billItemCount > 0 ? 'pb-28' : 'pb-6'}>
-      <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-5">
+      <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-4">
         {/* Sticky header */}
         <header className="sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -158,7 +167,7 @@ export default function PublicMenu() {
             />
             {query ? (
               <button
-                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition hover:bg-interactiveSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)]"
+                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition-all duration-200 hover:bg-interactiveSoft active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] motion-reduce:transition-none motion-reduce:transform-none"
                 onClick={() => setQuery('')}
                 aria-label={t('مسح البحث', 'Clear search')}
               >
@@ -169,7 +178,7 @@ export default function PublicMenu() {
         </header>
 
         {/* Category tabs */}
-        <div className="mt-3 mb-5">
+        <div className="mt-3 mb-4">
           {loading ? (
             <div className="flex flex-wrap gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-2 shadow-soft">
               <Skeleton className="h-10 w-16 rounded-full" />
@@ -185,7 +194,7 @@ export default function PublicMenu() {
               allCategoriesTitle={t('كل الفئات', 'All categories')}
               onChange={(id) => {
                 setSelectedCategory(id);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                scrollToMenuTop();
               }}
             />
           )}
@@ -198,7 +207,7 @@ export default function PublicMenu() {
             <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
           </Card>
         ) : loading ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="overflow-hidden rounded-[26px] bg-surface shadow-soft">
                 <Skeleton className="aspect-[4/3] w-full rounded-none" />
@@ -214,11 +223,28 @@ export default function PublicMenu() {
             <p className="text-sm text-muted">{t('لا توجد فئات بعد. يمكن للمشرف إضافتها.', 'No categories yet. Admin can add categories.')}</p>
           </Card>
         ) : visibleItems.length === 0 ? (
-          <Card className="p-6 text-center">
-            <p className="text-sm text-muted">{debouncedQuery ? t('لا توجد نتائج مطابقة.', 'No matching items.') : t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
+          <Card className="space-y-3 p-6 text-center">
+            {debouncedQuery ? (
+              <>
+                <p className="text-base font-medium text-text">{t('لا توجد نتائج مطابقة للبحث.', 'No matching items found.')}</p>
+                <p className="text-sm text-muted">{t('جرّب كلمة أخرى أو امسح البحث للعودة إلى القائمة.', 'Try another keyword or clear search to browse the menu.')}</p>
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <Button variant="secondary" className="sm:min-w-40" onClick={() => setQuery('')}>
+                    {t('مسح البحث', 'Clear search')}
+                  </Button>
+                  {selectedCategory !== ALL_KEY ? (
+                    <Button variant="ghost" className="sm:min-w-40" onClick={() => setSelectedCategory(ALL_KEY)}>
+                      {t('عرض كل الفئات', 'Show all categories')}
+                    </Button>
+                  ) : null}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-muted">{t('لا توجد أصناف في هذه الفئة حالياً.', 'No items in this category yet.')}</p>
+            )}
           </Card>
         ) : (
-          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             {visibleItems.map((item) => {
               const name = language === 'ar' ? item.name_ar : item.name_en;
               const rawDescription = language === 'ar' ? item.desc_ar : item.desc_en;
@@ -254,6 +280,7 @@ export default function PublicMenu() {
 
       <BillPill
         count={billItemCount}
+        summary={billSummary}
         onOpen={() => setBillOpen(true)}
         label={t('الحساب', 'Bill')}
         ariaLabel={t('فتح الحساب', 'Open bill')}

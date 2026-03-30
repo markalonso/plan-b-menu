@@ -45,17 +45,17 @@ export default function MenuCard({
           )}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
           {/* Price badge */}
-          <span className="absolute bottom-3 end-3 inline-flex items-center rounded-full border border-priceBadgeBorder bg-priceBadgeBg px-3 py-1 text-sm font-semibold text-priceBadgeText shadow-soft backdrop-blur-sm">
+          <span className="absolute bottom-2.5 end-2.5 inline-flex min-h-7 items-center rounded-full border border-priceBadgeBorder bg-priceBadgeBg px-2.5 py-1 text-[0.82rem] font-semibold leading-none text-priceBadgeText shadow-soft backdrop-blur-sm">
             {priceText}
           </span>
         </div>
 
         {/* Content */}
-        <div className="p-3.5 md:p-4">
-          <h3 className="font-heading text-lg leading-snug text-text">{name}</h3>
+        <div className="space-y-1.5 p-3">
+          <h3 className="font-heading text-[1.04rem] font-semibold leading-snug text-text">{name}</h3>
           {description ? (
             <p
-              className="mt-1.5 text-sm leading-relaxed text-muted"
+              className="text-sm leading-[1.5] text-muted"
               style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
             >
               {description}
