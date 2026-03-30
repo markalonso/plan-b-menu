@@ -3,12 +3,12 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import LanguageToggle from '../components/LanguageToggle';
-import Skeleton from '../components/Skeleton';
 import BillSheet from '../components/bill/BillSheet';
 import BillPill from '../components/bill/BillPill';
 import CategoryTabs from '../components/menu/CategoryTabs';
 import ItemSheet from '../components/menu/ItemSheet';
 import MenuCard from '../components/menu/MenuCard';
+import planBMark from '../assets/plan-b-mark.svg';
 import { getCategories, getItems, getSettings, type Category, type MenuItem, type Settings } from '../lib/api/menu';
 import { billActions, getItemCount, getTotal, useBillStore } from '../lib/bill/store';
 import { useLanguage } from '../lib/language';
@@ -16,8 +16,40 @@ import { filterMenuItems } from '../lib/menu/filter';
 
 const ALL_KEY = '__all__';
 const MAX_VISIBLE_CATEGORY_CHIPS = 10;
+const SPLASH_MIN_MS = 220;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
+
+function BrandMark({ className = '' }: { className?: string }) {
+  return <img src={planBMark} alt="" className={className} loading="eager" decoding="async" />;
+}
+
+function MenuSplash({ restaurantName }: { restaurantName: string }) {
+  return (
+    <section className="entry-shell entry-splash" aria-label={restaurantName}>
+      <div className="entry-card">
+        <BrandMark className="mx-auto h-20 w-20 drop-shadow-[0_12px_25px_rgba(13,58,146,0.2)]" />
+        <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-text">{restaurantName}</h1>
+      </div>
+    </section>
+  );
+}
+
+function BrandedLoading({ restaurantName, loadingText }: { restaurantName: string; loadingText: string }) {
+  return (
+    <section className="entry-shell entry-loading" aria-live="polite" aria-busy="true">
+      <div className="entry-card">
+        <BrandMark className="mx-auto h-16 w-16 opacity-95" />
+        <p className="mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-muted/70">Plan B Menu</p>
+        <h2 className="mt-1 font-heading text-2xl font-semibold tracking-tight text-text">{restaurantName}</h2>
+        <p className="mt-2 text-sm text-muted">{loadingText}</p>
+        <div className="mt-5 flex items-center justify-center">
+          <span className="loading-dots" aria-hidden="true" />
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function formatPrice(price: number, currency: string, language: 'ar' | 'en') {
   const locale = language === 'ar' ? 'ar-EG' : 'en-US';
@@ -51,6 +83,8 @@ export default function PublicMenu() {
   const [billOpen, setBillOpen] = useState(false);
   const [loading, setLoading] = useState(!cache);
   const [error, setError] = useState('');
+  const [splashReadyToExit, setSplashReadyToExit] = useState(false);
+  const [entryPhase, setEntryPhase] = useState<'splash' | 'loading' | 'menu'>(cache ? 'menu' : 'splash');
   const billState = useBillStore();
 
   useEffect(() => {
@@ -94,6 +128,25 @@ export default function PublicMenu() {
     void loadData();
   }, []);
 
+  useEffect(() => {
+    if (cache) {
+      setSplashReadyToExit(true);
+      return;
+    }
+
+    const id = window.setTimeout(() => setSplashReadyToExit(true), SPLASH_MIN_MS);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!splashReadyToExit) {
+      setEntryPhase('splash');
+      return;
+    }
+
+    setEntryPhase(loading ? 'loading' : 'menu');
+  }, [splashReadyToExit, loading]);
+
   const tabs = useMemo(
     () => [
       { id: ALL_KEY, label: t('الكل', 'All') },
@@ -136,19 +189,33 @@ export default function PublicMenu() {
   const billTotal = getTotal(billState);
   const billSummary = formatPrice(billTotal, currency, language);
 
+  if (entryPhase === 'splash') {
+    return <MenuSplash restaurantName={restaurantName} />;
+  }
+
+  if (entryPhase === 'loading') {
+    return <BrandedLoading restaurantName={restaurantName} loadingText={t('نجهز قائمتك الآن', 'Preparing your menu')} />;
+  }
+
   return (
-    <main className={billItemCount > 0 ? 'pb-28' : 'pb-6'}>
+    <main className={`menu-welcome-enter ${billItemCount > 0 ? 'pb-28' : 'pb-6'}`}>
       <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-4">
         {/* Sticky header */}
         <header className="sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
+          <div className="menu-hero mb-4 rounded-2xl border border-border/60 bg-bg/70 p-3">
+            <div className="flex items-center gap-2.5">
+              <BrandMark className="h-8 w-8 shrink-0" />
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted/70">Plan B Menu</p>
+                <p className="text-sm leading-tight text-muted">{t('اختيارات اليوم بلمسة هادئة', 'Today’s picks, presented with calm')}</p>
+              </div>
+            </div>
+          </div>
+
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted/70">Plan B Menu</p>
-              {loading ? (
-                <Skeleton className="mt-1.5 h-8 w-48" />
-              ) : (
-                <h1 className="mt-0.5 font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
-              )}
+              <h1 className="mt-0.5 font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
             </div>
             <LanguageToggle />
           </div>
@@ -179,25 +246,17 @@ export default function PublicMenu() {
 
         {/* Category tabs */}
         <div className="mt-3 mb-4">
-          {loading ? (
-            <div className="flex flex-wrap gap-1.5 rounded-2xl border border-border/60 bg-tabbar p-2 shadow-soft">
-              <Skeleton className="h-10 w-16 rounded-full" />
-              <Skeleton className="h-10 w-20 rounded-full" />
-              <Skeleton className="h-10 w-20 rounded-full" />
-            </div>
-          ) : (
-            <CategoryTabs
-              tabs={tabs}
-              active={selectedCategory}
-              maxVisibleTabs={MAX_VISIBLE_CATEGORY_CHIPS}
-              moreLabel={t('المزيد', 'More')}
-              allCategoriesTitle={t('كل الفئات', 'All categories')}
-              onChange={(id) => {
-                setSelectedCategory(id);
-                scrollToMenuTop();
-              }}
-            />
-          )}
+          <CategoryTabs
+            tabs={tabs}
+            active={selectedCategory}
+            maxVisibleTabs={MAX_VISIBLE_CATEGORY_CHIPS}
+            moreLabel={t('المزيد', 'More')}
+            allCategoriesTitle={t('كل الفئات', 'All categories')}
+            onChange={(id) => {
+              setSelectedCategory(id);
+              scrollToMenuTop();
+            }}
+          />
         </div>
 
         {/* Content */}
@@ -206,18 +265,6 @@ export default function PublicMenu() {
             <p className="text-sm text-muted">{error}</p>
             <Button onClick={() => void loadData()}>{t('إعادة المحاولة', 'Retry')}</Button>
           </Card>
-        ) : loading ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="overflow-hidden rounded-[26px] bg-surface shadow-soft">
-                <Skeleton className="aspect-[4/3] w-full rounded-none" />
-                <div className="space-y-2 p-4">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
         ) : categories.length === 0 ? (
           <Card className="p-6 text-center">
             <p className="text-sm text-muted">{t('لا توجد فئات بعد. يمكن للمشرف إضافتها.', 'No categories yet. Admin can add categories.')}</p>
