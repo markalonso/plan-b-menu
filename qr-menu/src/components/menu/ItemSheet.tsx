@@ -59,9 +59,9 @@ export default function ItemSheet({
   return (
     <BottomSheet open={open} onClose={handleClose} title={name}>
       {item ? (
-        <div className="space-y-4 pb-2">
+        <div className="space-y-3.5 pb-2">
           {/* Hero image */}
-          <div className="relative overflow-hidden rounded-2xl bg-surface2" style={{ aspectRatio: '16/9' }}>
+          <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-surface2" style={{ aspectRatio: '16/9' }}>
             {item.image_url && !imageFailed ? (
               <img
                 src={item.image_url}
@@ -85,14 +85,14 @@ export default function ItemSheet({
 
           {/* Description */}
           {(trimmedDesc || (item.tags?.length ?? 0) > 0) && (
-            <div className="rounded-2xl bg-surface2 px-4 py-4">
+            <div className="rounded-2xl border border-border/40 bg-surface2 px-4 py-3.5">
               {trimmedDesc ? (
-                <p className="text-sm leading-relaxed text-muted">{trimmedDesc}</p>
+                <p className="text-sm leading-[1.55] text-muted">{trimmedDesc}</p>
               ) : null}
               {item.tags?.length ? (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
                   {item.tags.map((tag) => (
-                    <span key={tag} className="inline-flex items-center rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted shadow-soft">
+                    <span key={tag} className="inline-flex items-center rounded-full border border-border/50 bg-surface px-2.5 py-1 text-xs font-medium text-muted">
                       {tag}
                     </span>
                   ))}
@@ -102,16 +102,16 @@ export default function ItemSheet({
           )}
 
           {/* Price row */}
-          <div className="flex items-center justify-between rounded-2xl bg-[color:var(--accentSoft)] px-4 py-3">
-            <p className="text-sm font-medium uppercase tracking-[0.12em] text-muted">{t('السعر', 'Price')}</p>
-            <p className="font-heading text-2xl font-bold text-accent">{getMenuPriceText(item, currency, language)}</p>
+          <div className="flex items-end justify-between rounded-2xl border border-border/50 bg-surface px-4 py-3.5 shadow-soft">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-muted">{t('السعر', 'Price')}</p>
+            <p className="font-heading text-[1.7rem] font-semibold leading-none text-primary">{getMenuPriceText(item, currency, language)}</p>
           </div>
 
           {/* Actions */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 rounded-2xl bg-surface2 p-2">
-              <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface px-2 py-1 shadow-soft">
-                <span className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('الكمية', 'Qty')}</span>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 rounded-2xl border border-border/40 bg-surface2 p-2">
+              <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-border/50 bg-surface px-1.5 py-1">
+                <span className="px-1 text-[0.66rem] font-semibold uppercase tracking-[0.08em] text-muted">{t('الكمية', 'Qty')}</span>
                 <button
                   type="button"
                   onClick={decrementQty}
@@ -132,11 +132,11 @@ export default function ItemSheet({
                   +
                 </button>
               </div>
-              <Button className="flex-1" onClick={() => handleAdd(item)}>
+              <Button className="min-w-0 flex-1" onClick={() => handleAdd(item)}>
                 {t('أضف للحساب', 'Add to bill')}
               </Button>
             </div>
-            <Button variant="secondary" onClick={handleClose} className="w-full">
+            <Button variant="ghost" onClick={handleClose} className="w-full text-sm font-medium">
               {t('إغلاق', 'Close')}
             </Button>
           </div>

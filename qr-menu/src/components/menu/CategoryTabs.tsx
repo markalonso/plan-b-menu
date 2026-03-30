@@ -31,8 +31,8 @@ export default function CategoryTabs({
   return (
     <>
       <div className="rounded-2xl border border-border/60 bg-tabbar p-2 shadow-soft backdrop-blur-sm">
-        <div className="space-y-1.5">
-          <div className="flex flex-wrap gap-1.5">
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-2">
             {firstRowTabs.map((tab) => (
               <Chip
                 key={tab.id}
@@ -46,7 +46,7 @@ export default function CategoryTabs({
             ))}
           </div>
           {(secondRowTabs.length > 0 || hasOverflow) ? (
-            <div className="ms-3 flex flex-wrap gap-1.5">
+            <div className="ms-2 flex flex-wrap gap-2">
               {secondRowTabs.map((tab) => (
                 <Chip
                   key={tab.id}
