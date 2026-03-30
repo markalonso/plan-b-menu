@@ -115,6 +115,15 @@ select {
   animation: menu-rise 220ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
+.ios-webkit .entry-card,
+.ios-webkit.menu-welcome-enter {
+  animation: none;
+}
+
+.ios-webkit .entry-card {
+  backdrop-filter: none;
+}
+
 .menu-hero {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.2)),
