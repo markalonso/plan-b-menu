@@ -130,6 +130,48 @@ select {
     radial-gradient(140% 100% at 8% 0%, rgba(255, 105, 56, 0.1), transparent 50%);
 }
 
+.menu-sticky-shell {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(249, 244, 238, 0.7));
+}
+
+.menu-sticky-shell-ios {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 243, 237, 0.9));
+}
+
+.menu-sticky-header {
+  position: sticky;
+  overflow: clip;
+  border: 1px solid rgba(233, 228, 222, 0.76);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.93) 0%, rgba(249, 245, 239, 0.84) 55%, rgba(247, 242, 236, 0.9) 100%);
+  box-shadow:
+    0 16px 40px rgba(31, 24, 18, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+}
+
+.menu-sticky-header::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 22px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(246, 241, 235, 0), rgba(246, 241, 235, 0.58) 52%, rgba(246, 241, 235, 0.8) 100%);
+}
+
+.menu-sticky-header-ios {
+  border-color: rgba(233, 228, 222, 0.88);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(251, 247, 241, 0.94) 55%, rgba(248, 243, 237, 0.96) 100%);
+  box-shadow:
+    0 14px 34px rgba(31, 24, 18, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 @keyframes entry-fade {
   from {
     opacity: 0;

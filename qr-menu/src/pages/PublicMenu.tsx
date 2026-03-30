@@ -244,9 +244,9 @@ export default function PublicMenu() {
 
   return (
     <main className={`${isIOSWebKit ? 'ios-webkit' : ''} menu-welcome-enter ${billItemCount > 0 ? 'pb-28' : 'pb-6'}`}>
-      <div className={`rounded-[30px] bg-surface/60 p-3 shadow-soft md:p-4 ${isIOSWebKit ? '' : 'backdrop-blur-sm'}`}>
+      <div className={`menu-sticky-shell rounded-[30px] p-3 shadow-soft md:p-4 ${isIOSWebKit ? 'menu-sticky-shell-ios' : 'backdrop-blur-sm'}`}>
         {/* Sticky header */}
-        <header className={`sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? '' : 'backdrop-blur-md'}`}>
+        <header className={`menu-sticky-header sticky top-0 z-30 rounded-2xl px-4 pb-3 pt-4 md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? 'menu-sticky-header-ios' : 'backdrop-blur-lg'}`}>
           <div className="menu-hero mb-4 rounded-2xl border border-border/60 bg-bg/70 p-3">
             <div className="flex items-center gap-2.5">
               <BrandMark className="h-8 w-8 shrink-0" />
