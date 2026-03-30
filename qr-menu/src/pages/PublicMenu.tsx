@@ -17,6 +17,7 @@ import { filterMenuItems } from '../lib/menu/filter';
 const ALL_KEY = '__all__';
 const MAX_VISIBLE_CATEGORY_CHIPS = 10;
 const SPLASH_MIN_MS = 220;
+const LOAD_TIMEOUT_MS = 12_000;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
@@ -24,9 +25,17 @@ function BrandMark({ className = '' }: { className?: string }) {
   return <img src={planBMark} alt="" className={className} loading="eager" decoding="async" />;
 }
 
-function MenuSplash({ restaurantName }: { restaurantName: string }) {
+function isIOSWebKitBrowser() {
+  if (typeof window === 'undefined') return false;
+  const ua = window.navigator.userAgent;
+  const iOSDevice = /iP(hone|od|ad)/.test(ua) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  const webkitEngine = /WebKit/i.test(ua);
+  return iOSDevice && webkitEngine;
+}
+
+function MenuSplash({ restaurantName, isIOSWebKit }: { restaurantName: string; isIOSWebKit: boolean }) {
   return (
-    <section className="entry-shell entry-splash" aria-label={restaurantName}>
+    <section className={`entry-shell entry-splash ${isIOSWebKit ? 'ios-webkit' : ''}`} aria-label={restaurantName}>
       <div className="entry-card">
         <BrandMark className="mx-auto h-20 w-20 drop-shadow-[0_12px_25px_rgba(13,58,146,0.2)]" />
         <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-text">{restaurantName}</h1>
@@ -35,9 +44,9 @@ function MenuSplash({ restaurantName }: { restaurantName: string }) {
   );
 }
 
-function BrandedLoading({ restaurantName, loadingText }: { restaurantName: string; loadingText: string }) {
+function BrandedLoading({ restaurantName, loadingText, isIOSWebKit }: { restaurantName: string; loadingText: string; isIOSWebKit: boolean }) {
   return (
-    <section className="entry-shell entry-loading" aria-live="polite" aria-busy="true">
+    <section className={`entry-shell entry-loading ${isIOSWebKit ? 'ios-webkit' : ''}`} aria-live="polite" aria-busy="true">
       <div className="entry-card">
         <BrandMark className="mx-auto h-16 w-16 opacity-95" />
         <p className="mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-muted/70">Plan B Menu</p>
@@ -85,7 +94,9 @@ export default function PublicMenu() {
   const [error, setError] = useState('');
   const [splashReadyToExit, setSplashReadyToExit] = useState(false);
   const [entryPhase, setEntryPhase] = useState<'splash' | 'loading' | 'menu'>(cache ? 'menu' : 'splash');
+  const [isIOSWebKit] = useState(() => isIOSWebKitBrowser());
   const billState = useBillStore();
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedQuery(query), 200);
@@ -93,11 +104,18 @@ export default function PublicMenu() {
   }, [query]);
 
   async function loadData() {
+    let timeoutId: number | undefined;
+
     try {
       setLoading(true);
       setError('');
 
-      const [settingsData, categoriesData, itemsData] = await Promise.all([getSettings().catch(() => null), getCategories(), getItems()]);
+      const request = Promise.all([getSettings().catch(() => null), getCategories(), getItems()]);
+      const timeout = new Promise<never>((_, reject) => {
+        timeoutId = window.setTimeout(() => reject(new Error('menu-load-timeout')), LOAD_TIMEOUT_MS);
+      });
+
+      const [settingsData, categoriesData, itemsData] = await Promise.race([request, timeout]);
 
       const orderedCategories = [...categoriesData]
         .filter((c) => c.is_active !== false)
@@ -113,15 +131,30 @@ export default function PublicMenu() {
         items: orderedItems
       };
 
+      if (!mountedRef.current) return;
       setSettings(settingsData);
       setCategories(orderedCategories);
       setItems(orderedItems);
     } catch {
+      if (!mountedRef.current) return;
       setError(t('حدث خطأ أثناء تحميل القائمة.', 'Failed to load the menu.'));
     } finally {
-      setLoading(false);
+      if (typeof timeoutId === 'number') {
+        window.clearTimeout(timeoutId);
+      }
+
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (cache) return;
@@ -146,6 +179,18 @@ export default function PublicMenu() {
 
     setEntryPhase(loading ? 'loading' : 'menu');
   }, [splashReadyToExit, loading]);
+
+  useEffect(() => {
+    if (entryPhase !== 'loading') return;
+
+    const id = window.setTimeout(() => {
+      if (!mountedRef.current) return;
+      setError(t('تعذر إكمال التحميل. حاول مرة أخرى.', 'Loading took too long. Please retry.'));
+      setLoading(false);
+    }, LOAD_TIMEOUT_MS + SPLASH_MIN_MS);
+
+    return () => window.clearTimeout(id);
+  }, [entryPhase, t]);
 
   const tabs = useMemo(
     () => [
@@ -190,18 +235,18 @@ export default function PublicMenu() {
   const billSummary = formatPrice(billTotal, currency, language);
 
   if (entryPhase === 'splash') {
-    return <MenuSplash restaurantName={restaurantName} />;
+    return <MenuSplash restaurantName={restaurantName} isIOSWebKit={isIOSWebKit} />;
   }
 
   if (entryPhase === 'loading') {
-    return <BrandedLoading restaurantName={restaurantName} loadingText={t('نجهز قائمتك الآن', 'Preparing your menu')} />;
+    return <BrandedLoading restaurantName={restaurantName} loadingText={t('نجهز قائمتك الآن', 'Preparing your menu')} isIOSWebKit={isIOSWebKit} />;
   }
 
   return (
-    <main className={`menu-welcome-enter ${billItemCount > 0 ? 'pb-28' : 'pb-6'}`}>
-      <div className="rounded-[30px] bg-surface/60 p-3 shadow-soft backdrop-blur-sm md:p-4">
+    <main className={`${isIOSWebKit ? 'ios-webkit' : ''} menu-welcome-enter ${billItemCount > 0 ? 'pb-28' : 'pb-6'}`}>
+      <div className={`rounded-[30px] bg-surface/60 p-3 shadow-soft md:p-4 ${isIOSWebKit ? '' : 'backdrop-blur-sm'}`}>
         {/* Sticky header */}
-        <header className="sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft backdrop-blur-md md:px-5 [transform:translateZ(0)]">
+        <header className={`sticky top-0 z-30 rounded-2xl border border-border/30 bg-bg/90 px-4 pb-3 pt-4 shadow-soft md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? '' : 'backdrop-blur-md'}`}>
           <div className="menu-hero mb-4 rounded-2xl border border-border/60 bg-bg/70 p-3">
             <div className="flex items-center gap-2.5">
               <BrandMark className="h-8 w-8 shrink-0" />
