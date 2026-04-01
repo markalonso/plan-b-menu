@@ -8,7 +8,7 @@ import BillPill from '../components/bill/BillPill';
 import CategoryTabs from '../components/menu/CategoryTabs';
 import ItemSheet from '../components/menu/ItemSheet';
 import MenuCard from '../components/menu/MenuCard';
-import planBMark from '../assets/plan-b-mark.svg';
+import planBMark from '../assets/logo-planb.png.png';
 import { getCategories, getItems, getSettings, type Category, type MenuItem, type Settings } from '../lib/api/menu';
 import { billActions, getItemCount, getTotal, useBillStore } from '../lib/bill/store';
 import { useLanguage } from '../lib/language';
