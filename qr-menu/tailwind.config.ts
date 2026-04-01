@@ -43,10 +43,12 @@ export default {
         '3xl': 'var(--r-3xl)'
       },
       transitionTimingFunction: {
-        calm: 'ease'
+        calm: 'ease-out',
+        premium: 'cubic-bezier(0.22, 1, 0.36, 1)'
       },
       transitionDuration: {
-        calm: '300ms'
+        calm: '320ms',
+        premium: '360ms'
       },
       fontFamily: {
         sans: ['var(--font-family)', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
