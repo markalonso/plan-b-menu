@@ -30,30 +30,30 @@ export default function CategoryTabs({
 
   return (
     <>
-      <div className="rounded-2xl border border-border/60 bg-tabbar p-2 shadow-soft backdrop-blur-sm">
-        <div className="space-y-2">
-          <div className="flex flex-wrap gap-2">
+      <div className="rounded-2xl border border-border/60 bg-tabbar p-1.5 shadow-soft backdrop-blur-sm">
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap gap-1.5">
             {firstRowTabs.map((tab) => (
               <Chip
                 key={tab.id}
                 active={active === tab.id}
                 onClick={() => onChange(tab.id)}
                 aria-label={tab.label}
-                className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-4"
+                className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-3.5"
               >
                 {tab.label}
               </Chip>
             ))}
           </div>
           {(secondRowTabs.length > 0 || hasOverflow) ? (
-            <div className="ms-2 flex flex-wrap gap-2">
+            <div className="ms-1 flex flex-wrap gap-1.5">
               {secondRowTabs.map((tab) => (
                 <Chip
                   key={tab.id}
                   active={active === tab.id}
                   onClick={() => onChange(tab.id)}
                   aria-label={tab.label}
-                  className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-4"
+                  className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-3.5"
                 >
                   {tab.label}
                 </Chip>
@@ -64,7 +64,7 @@ export default function CategoryTabs({
                   active={isActiveHidden}
                   onClick={() => setIsMoreOpen(true)}
                   aria-label={moreLabel}
-                  className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-4"
+                  className="min-w-0 max-w-[calc(100%-0.375rem)] justify-center truncate whitespace-nowrap px-3.5"
                 >
                   {moreLabel}
                 </Chip>

@@ -19,11 +19,11 @@ export default function MenuCard({
 
   return (
     <button
-      className="group block min-h-11 w-full text-start transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2"
+      className="menu-card-reveal group block min-h-11 w-full text-start transition-all duration-calm ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
       onClick={onClick}
       aria-label={name}
     >
-      <article className="relative overflow-hidden rounded-[26px] border border-cardBorder bg-cardBg shadow-soft transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:shadow-elevate group-active:scale-[0.98]">
+      <article className="relative overflow-hidden rounded-[26px] border border-cardBorder bg-cardBg shadow-soft transition-all duration-calm ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:shadow-elevate group-active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none">
         {/* Image */}
         <div className="relative overflow-hidden bg-surface2" style={{ aspectRatio: '16/10' }}>
           {item.image_url && !imageFailed ? (
@@ -37,7 +37,7 @@ export default function MenuCard({
                 setImageLoading(false);
                 setImageFailed(true);
               }}
-              className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+              className="h-full w-full object-cover transition-transform duration-premium ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:transform-none"
             />
           ) : null}
           {(imageLoading || !item.image_url || imageFailed) && (
