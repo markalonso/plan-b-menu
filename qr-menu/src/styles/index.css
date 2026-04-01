@@ -112,11 +112,21 @@ select {
 }
 
 .menu-welcome-enter {
-  animation: menu-rise 220ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+  animation: menu-rise 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.menu-items-stage {
+  animation: menu-items-fade 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.menu-card-reveal {
+  animation: menu-card-rise 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .ios-webkit .entry-card,
-.ios-webkit.menu-welcome-enter {
+.ios-webkit.menu-welcome-enter,
+.ios-webkit .menu-items-stage,
+.ios-webkit .menu-card-reveal {
   animation: none;
 }
 
@@ -187,7 +197,31 @@ select {
 @keyframes menu-rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menu-items-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menu-card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
   to {
@@ -204,7 +238,9 @@ select {
 
 @media (prefers-reduced-motion: reduce) {
   .entry-card,
-  .menu-welcome-enter {
+  .menu-welcome-enter,
+  .menu-items-stage,
+  .menu-card-reveal {
     animation-duration: 1ms;
     animation-iteration-count: 1;
     transform: none;

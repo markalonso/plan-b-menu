@@ -18,7 +18,7 @@ export default function BillPill({
   return createPortal(
     <button
       onClick={onOpen}
-      className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-4 py-2.5 text-primaryText shadow-elevate transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-primaryHover active:scale-[0.97] active:bg-primaryActive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
+      className="fixed end-4 z-40 inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-4 py-2.5 text-primaryText shadow-elevate transition-all duration-calm ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-primaryHover active:scale-[0.97] active:bg-primaryActive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
       style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
       aria-label={ariaLabel}
     >
