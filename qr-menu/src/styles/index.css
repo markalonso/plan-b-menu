@@ -102,6 +102,32 @@ select {
   animation-duration: 140ms;
 }
 
+.brand-logo {
+  display: block;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  transform: translateZ(0);
+}
+
+.brand-logo-splash {
+  width: 5.25rem;
+  height: 5.25rem;
+  animation: logo-intro 260ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.brand-logo-loading {
+  width: 4rem;
+  height: 4rem;
+  opacity: 0.96;
+  animation: logo-intro 220ms cubic-bezier(0.2, 0.75, 0.3, 1) 40ms both;
+}
+
+.brand-logo-header {
+  width: 1.625rem;
+  height: 1.625rem;
+  flex-shrink: 0;
+}
+
 .loading-dots {
   width: 2rem;
   height: 2rem;
@@ -120,14 +146,13 @@ select {
   animation: none;
 }
 
-.ios-webkit .entry-card {
-  backdrop-filter: none;
+.ios-webkit .brand-logo-splash,
+.ios-webkit .brand-logo-loading {
+  animation: none;
 }
 
-.menu-hero {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.2)),
-    radial-gradient(140% 100% at 8% 0%, rgba(255, 105, 56, 0.1), transparent 50%);
+.ios-webkit .entry-card {
+  backdrop-filter: none;
 }
 
 .menu-sticky-shell {
@@ -196,9 +221,28 @@ select {
   }
 }
 
+@keyframes logo-intro {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 768px) {
+  .brand-logo-header {
+    width: 1.875rem;
+    height: 1.875rem;
   }
 }
 
@@ -212,5 +256,12 @@ select {
 
   .loading-dots {
     animation-duration: 1.8s;
+  }
+
+  .brand-logo-splash,
+  .brand-logo-loading {
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+    transform: none;
   }
 }
