@@ -246,23 +246,20 @@ export default function PublicMenu() {
     <main className={`${isIOSWebKit ? 'ios-webkit' : ''} menu-welcome-enter ${billItemCount > 0 ? 'pb-28' : 'pb-6'}`}>
       <div className={`menu-sticky-shell rounded-[30px] p-3 shadow-soft md:p-4 ${isIOSWebKit ? 'menu-sticky-shell-ios' : 'backdrop-blur-sm'}`}>
         {/* Sticky header */}
-        <header className={`menu-sticky-header sticky top-0 z-30 rounded-2xl px-4 pb-3 pt-4 md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? 'menu-sticky-header-ios' : 'backdrop-blur-lg'}`}>
-          <div className="menu-hero mb-4 rounded-2xl border border-border/60 bg-bg/70 p-3">
-            <div className="flex items-center gap-2.5">
-              <BrandMark className="h-8 w-8 shrink-0" />
-              <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted/70">Plan B Menu</p>
-                <p className="text-sm leading-tight text-muted">{t('اختيارات اليوم بلمسة هادئة', 'Today’s picks, presented with calm')}</p>
+        <header className={`menu-sticky-header sticky top-0 z-30 rounded-2xl px-4 pb-2.5 pt-3.5 md:px-5 [transform:translateZ(0)] ${isIOSWebKit ? 'menu-sticky-header-ios' : 'backdrop-blur-lg'}`}>
+          <div className="menu-hero mb-3 rounded-2xl border border-border/60 bg-bg/70 p-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <BrandMark className="h-8 w-8 shrink-0" />
+                <div className="min-w-0">
+                  <h1 className="whitespace-nowrap font-heading text-[1.65rem] font-semibold leading-none tracking-tight md:text-4xl">Plan B</h1>
+                  <p className="mt-1 text-[0.72rem] font-medium uppercase tracking-[0.18em] text-muted/70">Menu</p>
+                </div>
+              </div>
+              <div className="shrink-0">
+                <LanguageToggle />
               </div>
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted/70">Plan B Menu</p>
-              <h1 className="mt-0.5 font-heading text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{restaurantName}</h1>
-            </div>
-            <LanguageToggle />
           </div>
 
           {/* Search */}
@@ -279,7 +276,7 @@ export default function PublicMenu() {
             />
             {query ? (
               <button
-                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition-all duration-200 hover:bg-interactiveSoft active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] motion-reduce:transition-none motion-reduce:transform-none"
+                className="absolute inset-y-0 end-3 inline-flex min-h-9 min-w-9 items-center justify-center rounded-full text-sm text-muted transition-all duration-calm ease-premium hover:bg-interactiveSoft active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary-focus-ring)] motion-reduce:transition-none motion-reduce:transform-none"
                 onClick={() => setQuery('')}
                 aria-label={t('مسح البحث', 'Clear search')}
               >
@@ -290,7 +287,7 @@ export default function PublicMenu() {
         </header>
 
         {/* Category tabs */}
-        <div className="mt-3 mb-4">
+        <div className="mb-3 mt-2.5">
           <CategoryTabs
             tabs={tabs}
             active={selectedCategory}
@@ -336,7 +333,7 @@ export default function PublicMenu() {
             )}
           </Card>
         ) : (
-          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          <section className="menu-items-stage grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             {visibleItems.map((item) => {
               const name = language === 'ar' ? item.name_ar : item.name_en;
               const rawDescription = language === 'ar' ? item.desc_ar : item.desc_en;
