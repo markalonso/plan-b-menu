@@ -13,11 +13,13 @@ import { getCategories, getItems, getSettings, type Category, type MenuItem, typ
 import { billActions, getItemCount, getTotal, useBillStore } from '../lib/bill/store';
 import { useLanguage } from '../lib/language';
 import { filterMenuItems } from '../lib/menu/filter';
+import { getOrCreateSessionId, trackEvent } from '../lib/analytics';
 
 const ALL_KEY = '__all__';
 const MAX_VISIBLE_CATEGORY_CHIPS = 10;
 const SPLASH_MIN_MS = 220;
 const LOAD_TIMEOUT_MS = 12_000;
+const MIN_SEARCH_EVENT_CHARS = 2;
 
 let cache: { settings: Settings | null; categories: Category[]; items: MenuItem[] } | null = null;
 
@@ -97,6 +99,7 @@ export default function PublicMenu() {
   const [isIOSWebKit] = useState(() => isIOSWebKitBrowser());
   const billState = useBillStore();
   const mountedRef = useRef(true);
+  const lastSearchEventRef = useRef('');
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedQuery(query), 200);
@@ -157,6 +160,11 @@ export default function PublicMenu() {
   }, []);
 
   useEffect(() => {
+    getOrCreateSessionId();
+    trackEvent('session_start', { dedupeKey: 'session_start', dedupeWindowMs: 5_000 });
+  }, []);
+
+  useEffect(() => {
     if (cache) return;
     void loadData();
   }, []);
@@ -208,18 +216,53 @@ export default function PublicMenu() {
     [items, selectedCategory, debouncedQuery, language]
   );
 
+  useEffect(() => {
+    if (!selectedItem) return;
+
+    const fallbackId = `${selectedItem.name_en}-${selectedItem.price}`;
+    trackEvent('item_view', {
+      item_id: selectedItem.id,
+      dedupeKey: `item_view:${selectedItem.id ?? fallbackId}`,
+      dedupeWindowMs: 1_500
+    });
+  }, [selectedItem]);
+
+  useEffect(() => {
+    const normalized = debouncedQuery.trim();
+    const normalizedTerm = normalized.toLowerCase();
+
+    if (normalized.length < MIN_SEARCH_EVENT_CHARS) return;
+    if (normalizedTerm === lastSearchEventRef.current) return;
+
+    trackEvent('search_used', {
+      dedupeKey: `search_used:${normalizedTerm}`,
+      dedupeWindowMs: 5_000
+    });
+
+    lastSearchEventRef.current = normalizedTerm;
+  }, [debouncedQuery]);
+
   const restaurantName = settings ? (language === 'ar' ? settings.restaurant_name_ar : settings.restaurant_name_en) : t('بلان بي', 'Plan B');
   const currency = settings?.currency ?? 'EGP';
   const vatNote = language === 'ar' ? settings?.vat_note_ar : settings?.vat_note_en;
 
   function addToBill(item: MenuItem, quantity: number) {
     const fallbackId = `${item.name_en}-${item.price}`;
+    const itemId = item.id ?? fallbackId;
+
     billActions.addItem({
-      id: item.id ?? fallbackId,
+      id: itemId,
       name_ar: item.name_ar,
       name_en: item.name_en,
       price: item.price
     }, quantity);
+
+    trackEvent('add_to_bill', {
+      item_id: item.id,
+      dedupeKey: `add_to_bill:${itemId}:${quantity}`,
+      dedupeWindowMs: 0
+    });
+
     setSelectedItem(null);
   }
 
@@ -297,6 +340,15 @@ export default function PublicMenu() {
             onChange={(id) => {
               setSelectedCategory(id);
               scrollToMenuTop();
+
+              if (id !== selectedCategory) {
+                const selectedCategoryId = id === ALL_KEY ? undefined : id;
+                trackEvent('category_click', {
+                  category_id: selectedCategoryId,
+                  dedupeKey: `category_click:${id}`,
+                  dedupeWindowMs: 400
+                });
+              }
             }}
           />
         </div>

@@ -9,8 +9,9 @@ import Login from './admin/Login';
 import Categories from './admin/Categories';
 import Items from './admin/Items';
 import SettingsSection from './admin/Settings';
+import Analytics from './admin/Analytics';
 
-type Section = 'categories' | 'items' | 'settings' | 'logout';
+type Section = 'categories' | 'items' | 'analytics' | 'settings' | 'logout';
 
 export default function Admin() {
   const { t } = useLanguage();
@@ -25,6 +26,7 @@ export default function Admin() {
     () => [
       { key: 'categories' as Section, label: t('الأقسام', 'Categories') },
       { key: 'items' as Section, label: t('الأصناف', 'Items') },
+      { key: 'analytics' as Section, label: t('التحليلات', 'Analytics') },
       { key: 'settings' as Section, label: t('الإعدادات', 'Settings') },
       { key: 'logout' as Section, label: t('خروج', 'Logout') }
     ],
@@ -127,12 +129,13 @@ export default function Admin() {
 
           {section === 'categories' ? <Categories notify={setToast} /> : null}
           {section === 'items' ? <Items notify={setToast} /> : null}
+          {section === 'analytics' ? <Analytics /> : null}
           {section === 'settings' ? <SettingsSection notify={setToast} /> : null}
         </div>
       </div>
 
       <nav className="fixed inset-x-4 z-40 rounded-3xl bg-[rgba(255,255,255,0.92)] p-2 shadow-elevate backdrop-blur-sm lg:hidden" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-5 gap-2">
           {nav.map((tab) => (
             <Button key={tab.key} variant={section === tab.key ? 'primary' : 'secondary'} onClick={() => setSection(tab.key)}>
               {tab.label}
